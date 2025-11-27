@@ -24,17 +24,15 @@ export const login = async (
       return res.status(401).json({ error: 'Неверное имя пользователя или пароль' });
     }
 
-    const secret = process.env.JWT_SECRET as jwt.Secret | undefined;
-    if (!secret) {
+    const secretEnv = process.env.JWT_SECRET;
+    if (!secretEnv) {
       console.error('JWT secret is not configured');
       return res.status(500).json({ error: 'Конфигурация JWT отсутствует' });
     }
+    const secret: jwt.Secret = secretEnv;
+    const expiresIn = (process.env.JWT_EXPIRES_IN || '7d') as jwt.SignOptions['expiresIn'];
 
-    const token = jwt.sign(
-      { userId: user.id },
-      secret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
+    const token = jwt.sign({ userId: user.id }, secret, { expiresIn });
 
     return res.json({
       token,

@@ -45,7 +45,11 @@ export const authenticate = async (
 };
 
 export const requireRole = (...roles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Response | void => {
     if (!req.user) {
       return res.status(401).json({ error: 'Требуется аутентификация' });
     }
@@ -54,7 +58,7 @@ export const requireRole = (...roles: string[]) => {
       return res.status(403).json({ error: 'Недостаточно прав' });
     }
 
-    next();
+    return next();
   };
 };
 
