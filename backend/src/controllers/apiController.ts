@@ -9,7 +9,10 @@ import { CardType } from '../types';
  * Public API endpoint for checking beneficiary eligibility
  * This is a placeholder - will be implemented based on actual requirements
  */
-export const checkBenefit = async (req: Request, res: Response): Promise<void> => {
+export const checkBenefit = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
     const { cardId, cardType, phone, routeNumber, settlement } = req.body;
 
@@ -147,7 +150,10 @@ export const checkBenefit = async (req: Request, res: Response): Promise<void> =
 /**
  * Record benefit usage (when ticket is sold)
  */
-export const recordBenefitUsage = async (req: Request, res: Response): Promise<void> => {
+export const recordBenefitUsage = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
     const { beneficiaryId, benefitAssignmentId, routeNumber, settlement, tripsUsed, kilometersUsed, amount, cardId, cardType } = req.body;
 

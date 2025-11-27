@@ -6,7 +6,7 @@ import { BeneficiaryStatus, OperationType } from '../types';
 export const createBeneficiary = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const data = {
       fullName: req.body.fullName,
@@ -47,7 +47,7 @@ export const createBeneficiary = async (
 export const getBeneficiary = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const beneficiary = await BeneficiaryModel.findById(id);
@@ -66,7 +66,7 @@ export const getBeneficiary = async (
 export const listBeneficiaries = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { status, benefitTypeId, search, limit, offset } = req.query;
 
@@ -88,7 +88,7 @@ export const listBeneficiaries = async (
 export const updateBeneficiary = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const beneficiary = await BeneficiaryModel.findById(id);
@@ -139,7 +139,7 @@ export const updateBeneficiary = async (
 export const deleteBeneficiary = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const beneficiary = await BeneficiaryModel.findById(id);
@@ -171,7 +171,7 @@ export const deleteBeneficiary = async (
 export const getBeneficiaryOperations = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const operations = await BeneficiaryModel.getOperations(id);

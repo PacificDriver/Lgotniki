@@ -16,7 +16,7 @@ export const authenticate = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     

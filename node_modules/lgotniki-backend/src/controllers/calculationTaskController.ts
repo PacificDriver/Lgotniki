@@ -7,7 +7,7 @@ import { TaskStatus } from '../types';
 export const createTask = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Пользователь не аутентифицирован' });
@@ -33,7 +33,7 @@ export const createTask = async (
 export const getTask = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const task = await CalculationTaskModel.findById(id);
@@ -52,7 +52,7 @@ export const getTask = async (
 export const listTasks = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { status, benefitTypeId, limit, offset } = req.query;
 
@@ -73,7 +73,7 @@ export const listTasks = async (
 export const executeTask = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     

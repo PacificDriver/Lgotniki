@@ -3,7 +3,10 @@ import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { AuthRequest } from '../middleware/auth';
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
     const { username, password } = req.body;
 
@@ -21,7 +24,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return res.status(401).json({ error: 'Неверное имя пользователя или пароль' });
     }
 
-    const secret = process.env.JWT_SECRET;
+    const secret = process.env.JWT_SECRET as jwt.Secret | undefined;
     if (!secret) {
       console.error('JWT secret is not configured');
       return res.status(500).json({ error: 'Конфигурация JWT отсутствует' });
@@ -52,7 +55,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const getCurrentUser = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Пользователь не аутентифицирован' });

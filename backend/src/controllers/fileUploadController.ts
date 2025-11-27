@@ -17,7 +17,7 @@ export const uploadFile = upload.single('file');
 export const processFile = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Файл не загружен' });

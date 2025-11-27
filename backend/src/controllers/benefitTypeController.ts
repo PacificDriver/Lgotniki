@@ -5,7 +5,7 @@ import { AuthRequest } from '../middleware/auth';
 export const createBenefitType = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const data = {
       name: req.body.name,
@@ -31,7 +31,7 @@ export const createBenefitType = async (
 export const getBenefitType = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const benefitType = await BenefitTypeModel.findById(id);
@@ -50,7 +50,7 @@ export const getBenefitType = async (
 export const listBenefitTypes = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const activeOnly = req.query.activeOnly === 'true';
     const benefitTypes = await BenefitTypeModel.findAll(activeOnly);
@@ -64,7 +64,7 @@ export const listBenefitTypes = async (
 export const updateBenefitType = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const benefitType = await BenefitTypeModel.findById(id);
@@ -96,7 +96,7 @@ export const updateBenefitType = async (
 export const deleteBenefitType = async (
   req: AuthRequest,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const deleted = await BenefitTypeModel.delete(id);
