@@ -1,0 +1,213 @@
+.invoice-detail {
+  width: 100%;
+  position: relative;
+  padding: 1.8rem 1.8rem 0.5rem;
+
+  &__custom-card {
+    background-color: var(--m-card-background-color);
+    color: var(--m-text);
+
+    .customer-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &__user {
+        display: flex;
+        gap: 12px;
+
+        .personal-info {
+          display: flex;
+          flex-direction: column;
+
+          > span {
+            &:first-child {
+              font-weight: 600;
+            }
+
+            &:last-child {
+              font-size: 12px;
+              color: var(--m-text-muted);
+            }
+          }
+        }
+      }
+
+      &__address-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+
+        > span {
+          color: var(--m-text-muted);
+          font-size: 13px;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .invoice-info {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      gap: 16px;
+      background-color: var(--m-subtle-card-background-color);
+      border-radius: var(--m-border-radius-md);
+      margin-top: 24px;
+      padding: 16px 0;
+
+      &__sender,
+      &__customer {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 16px;
+
+        h4 {
+          font-weight: 500;
+          text-transform: uppercase;
+          font-size: 11px;
+          color: var(--m-text-muted);
+        }
+
+        .user {
+          display: flex;
+          gap: 12px;
+
+          &__info {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+
+            > span {
+              font-size: 12px;
+              font-weight: 500;
+              color: var(--m-text-muted);
+              line-height: 1;
+              padding: 0 0 8px;
+
+              &:first-child {
+                font-size: 13px;
+                color: var(--m-text);
+              }
+            }
+          }
+        }
+      }
+
+      &__customer {
+        align-items: flex-end;
+
+        .user__info {
+          align-items: flex-end;
+        }
+      }
+
+      &__detail {
+        border-top: 1px solid var(--border-color);
+        padding: 16px 16px 0;
+
+        h4 {
+          font-weight: 500;
+          text-transform: uppercase;
+          font-size: 11px;
+          color: var(--m-text-muted);
+          margin-bottom: 8px;
+        }
+
+        &__item {
+          display: flex;
+          flex-direction: column;
+          font-size: 12px;
+          white-space: nowrap;
+
+          > span {
+            color: var(--m-text-muted);
+
+            &:first-child {
+              color: var(--m-text);
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+
+    &__infos {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      > div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        > span {
+          font-size: 13px;
+
+          &:first-child {
+            width: 50%;
+            color: var(--m-text-muted);
+            font-weight: 500;
+          }
+        }
+      }
+
+      .amount {
+        margin-bottom: 12px;
+        > span {
+          &:last-child {
+            font-size: 18px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .invoice-items {
+      display: flex;
+      flex-direction: column;
+      margin-top: 24px;
+
+      h5,
+      h6 {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--m-text);
+      }
+
+      &__item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        border-bottom: 1px solid var(--m-border-color);
+        margin-bottom: 4px;
+        font-size: 12px;
+        padding-bottom: 5px;
+        color: var(--m-text-muted);
+
+        &__quantity {
+          text-align: center;
+          min-width: 50px;
+        }
+
+        > div {
+          &:last-child {
+            text-align: right;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--m-text-muted);
+          }
+        }
+      }
+
+      &__subtotal,
+      &__discount {
+        font-weight: 500;
+        color: var(--m-text);
+      }
+    }
+  }
+}

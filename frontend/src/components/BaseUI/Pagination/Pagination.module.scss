@@ -1,0 +1,118 @@
+.paginagion-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 0;
+  color: var(--m-text-light);
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    &--selector-label {
+      font-style: normal;
+      font-weight: 450;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    &__selector {
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      &::before {
+        content: '\e5c5';
+        font-family: 'Material Icons';
+        font-weight: 900;
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        pointer-events: none;
+      }
+
+      &--select {
+        border: 0px;
+        width: 40px;
+        padding: 0 8px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 16px;
+        cursor: pointer;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    &--per-page {
+      font-style: normal;
+      font-weight: 450;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    &__buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &__button {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &--icon {
+          cursor: pointer;
+          font-size: 22px !important;
+        }
+
+        &:hover {
+          background-color: #eceff1;
+        }
+
+        &--disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}
+
+[m-data-theme='dark'] {
+  .paginagion-container {
+    &__controls {
+      &__selector {
+        &--select {
+          background-color: transparent;
+        }
+
+        background-color: tomato;
+      }
+
+      &__buttons {
+        &__button {
+          &--icon {
+            cursor: pointer;
+            font-size: 22px !important;
+          }
+
+          &:hover {
+            background-color: rgba($color: #fff, $alpha: 0.1);
+          }
+        }
+      }
+    }
+  }
+}

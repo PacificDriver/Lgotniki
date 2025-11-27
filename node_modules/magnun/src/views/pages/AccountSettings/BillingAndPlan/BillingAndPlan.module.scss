@@ -1,0 +1,129 @@
+.billing-and-plan {
+  width: 100%;
+  position: relative;
+  padding: 0 1.5rem;
+
+  &__card {
+    width: 100%;
+    padding: 16px 0 10px;
+    border-radius: var(--m-border-radius-md);
+    border: 1px solid var(--m-border-card-file);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: var(--m-box-shadow-car);
+    background-color: var(--m-card-background-color);
+    min-height: 191px;
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 16px;
+
+      &__title {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      &__description {
+        font-size: 12px;
+        color: var(--m-text-muted);
+      }
+
+      &__value {
+        font-weight: 600;
+        white-space: nowrap;
+
+        span {
+          font-size: 2rem;
+        }
+      }
+    }
+
+    .card-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+
+      &__quantity {
+        color: var(--m-subtle-xxbolder);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      &__padding-xl {
+        padding-bottom: 14px;
+      }
+
+      &__item-box {
+        width: 100%;
+        border: 1px solid var(--m-border-color);
+        padding: 16px;
+        border-radius: var(--m-border-radius-md);
+        display: flex;
+        gap: 12px;
+
+        .card-info {
+          display: flex;
+          flex-direction: column;
+          line-height: 19px;
+
+          &__name,
+          &__number {
+            font-weight: 600;
+          }
+
+          &__expire {
+            color: var(--m-text-muted);
+            font-size: 12px;
+            font-weight: 600;
+          }
+
+          &__email {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--m-text-muted);
+            font-size: 12px;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      border-top: 1px solid var(--m-border-color);
+      padding: 12px 16px 0;
+    }
+  }
+
+  .invoice-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0px;
+    min-width: 170px;
+
+    &__button {
+      background-color: transparent;
+      padding: 6px 12px;
+      border-radius: var(--m-border-radius);
+      border: 1px solid var(--m-border-color);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: var(--m-text);
+
+      &:hover {
+        background-color: var(--m-subtle-card-background-color);
+      }
+    }
+  }
+}

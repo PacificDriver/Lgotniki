@@ -1,0 +1,27 @@
+.growth-rate-container {
+  width: 100%;
+  position: relative;
+
+  &__rate {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #afbad6;
+    font-weight: 500;
+
+    svg {
+      font-size: 18px;
+    }
+
+    &--positive {
+      color: #22ce9e;
+    }
+
+    &--negative {
+      color: #c10217;
+    }
+  }
+}

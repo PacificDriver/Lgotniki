@@ -1,0 +1,202 @@
+.email-list-container {
+  width: 100%;
+  position: relative;
+  background-color: var(--m-email-background-color);
+
+  &__header {
+    border-bottom: 1px solid var(--m-subtle-bolder);
+    padding: 4px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &--icons {
+      width: 35px;
+      height: 35px;
+      color: var(--m-icon-color);
+    }
+
+    &--checkbox-selector {
+      padding: 0;
+      height: -webkit-fit-content;
+      height: -moz-fit-content;
+      height: fit-content;
+      gap: 0;
+      background-color: transparent;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    &--search {
+      background-color: transparent;
+      width: 100%;
+      height: 30px;
+
+      input {
+        background-color: transparent;
+        border: var(--m-default-border);
+        height: 38px !important;
+        border-radius: 8px;
+      }
+
+      svg {
+        font-size: 20px;
+      }
+    }
+  }
+
+  &__content {
+    // padding: 4px 16px;
+    height: 76vh;
+    overflow-y: auto;
+    background-color: var(--m-email-background-color);
+    color: var(--m-text);
+
+    &__items {
+      padding: 14px 20px;
+      border-top: 1px solid var(--m-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      // background-color: #f4f7f9;
+      background-color: #fafafc;
+      cursor: pointer;
+      background-color: var(--m-email-background-color);
+
+      &:first-child {
+        border-color: transparent;
+      }
+
+      &--info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 30%;
+
+        &--icon {
+          font-size: 18px;
+          color: var(--m-icon-color);
+        }
+
+        &--icons {
+          display: flex;
+
+          svg {
+            font-size: 23px;
+            color: var(--m-icon-color);
+          }
+
+          &--starred {
+            color: #f7ca4c !important;
+          }
+        }
+
+        &--user {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          &--name {
+            white-space: nowrap;
+            font-weight: 500;
+          }
+        }
+      }
+
+      &--content {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 60%;
+
+        &--subject {
+          font-weight: 500;
+          padding-right: 16px;
+          position: relative;
+          color: var(--m-text);
+
+          &::after {
+            content: '-';
+            font-weight: normal;
+            position: absolute;
+            right: 4px;
+            font-size: 16px;
+          }
+        }
+
+        &--message {
+          // color: #5f6368;
+          color: var(--m-text-muted);
+        }
+      }
+
+      &--date {
+        width: 10%;
+        font-size: 12px;
+        color: var(--m-text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+
+        &--attachments {
+          transform: rotate(30deg);
+        }
+      }
+
+      &:hover {
+        background-color: var(--m-subtle-light);
+      }
+
+      &--unread {
+        background-color: #fff;
+        background-color: var(--m-email-background-color);
+
+        .email-list-container__content__items--content--subject,
+        .email-list-container__content__items--date,
+        .email-list-container__content__items--info--user--name {
+          font-weight: 700;
+        }
+      }
+
+      &--selected {
+        position: relative;
+        background-color: #4083f80d;
+
+        &:hover {
+          background-color: #4083f80d;
+        }
+
+        .email-list-container__content__items--info--icons {
+          svg {
+            color: var(--m-subtle-xxxbolder);
+          }
+        }
+      }
+    }
+
+    &--first-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      svg {
+        font-size: 18px;
+        cursor: pointer;
+      }
+    }
+
+    &__no-data {
+      min-height: 30vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+
+      &--message {
+        font-size: 18px;
+        font-family: 600;
+      }
+    }
+  }
+}

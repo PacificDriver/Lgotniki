@@ -1,0 +1,68 @@
+.tooltip-container {
+  position: relative;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__tooltip {
+    position: absolute;
+    background-color: #172b4d;
+    color: var(--m-white);
+    min-width: -webkit-min-content;
+    min-width: -moz-min-content;
+    min-width: min-content;
+    max-width: 300px;
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    overflow: hidden;
+    z-index: var(--m-z-index-tooltip);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    display: none;
+
+    &--bottom {
+      bottom: 0;
+      margin-bottom: -5px;
+      transform: translate(0, 100%);
+    }
+
+    &--top {
+      top: 0;
+      margin-top: -5px;
+      transform: translate(0, -100%);
+    }
+
+    &--left {
+      left: 0;
+      transform: translate(calc(-100% - 5px), 0);
+    }
+
+    &--right {
+      right: 0;
+      transform: translate(calc(100% + 5px), 0);
+    }
+  }
+}
+
+[m-data-theme='dark'] {
+  .tooltip-container {
+    &__tooltip {
+      background-color: #a0adbb;
+      color: #162949;
+    }
+  }
+}

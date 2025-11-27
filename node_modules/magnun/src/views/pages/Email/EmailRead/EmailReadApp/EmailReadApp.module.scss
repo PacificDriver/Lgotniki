@@ -1,0 +1,133 @@
+.email-read-app-container {
+  width: 100%;
+  position: relative;
+  color: var(--m-text-light);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border-bottom: 1px solid var(--m-border-color);
+
+    &__subject {
+      display: flex;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    &--starred-icon {
+      color: #f7ca4c !important;
+    }
+    &--star-icon {
+      font-size: 18px;
+    }
+  }
+
+  &__content {
+    padding: 16px;
+    margin-top: 16px;
+
+    &__subject {
+      font-size: 16px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .email-detail {
+      border-radius: var(--m-border-radius);
+      padding-bottom: 80px;
+
+      &--name {
+        font-weight: 600;
+        font-size: 14px;
+        padding-right: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      &--email {
+        color: var(--m-text-muted);
+        font-size: 12px;
+      }
+
+      &__recipient-email {
+        margin-top: 4px;
+
+        &--label {
+          background-color: transparent;
+          padding: 0;
+          color: var(--m-text-muted);
+          height: 15px;
+        }
+
+        .custom__content {
+          width: -webkit-fit-content;
+          width: -moz-fit-content;
+          width: fit-content;
+
+          strong {
+            font-weight: 500;
+          }
+        }
+
+        &__info {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 16px;
+
+          > div {
+            white-space: nowrap;
+          }
+        }
+      }
+
+      &__attachment {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border-top: 1px solid var(--m-border-color);
+        padding: 16px 0;
+
+        &--info {
+          border: 1px solid var(--m-border-color);
+          padding: 8px;
+          border-radius: var(--m-border-radius);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        &--label {
+          font-weight: 600;
+        }
+
+        &--total {
+          font-size: 12px;
+          font-weight: 400;
+          font-family: 'Roboto', sans-serif;
+        }
+      }
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    padding: 16px;
+    background-color: var(--m-white);
+    border-top: 1px solid var(--m-border-color);
+
+    &--button--icon {
+      transform: scale(-1, 1);
+    }
+  }
+}

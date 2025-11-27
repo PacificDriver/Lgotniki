@@ -1,0 +1,69 @@
+.ecommerce-container {
+  .stroked__gauge {
+    background-color: var(--m-card-background-color);
+    box-shadow: var(--m-box-shadow);
+    border-radius: var(--m-border-radius-md);
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .reset__shadow {
+      box-shadow: unset;
+    }
+
+    &__legend {
+      background-color: var(--m-card-background-color);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 16px 8px;
+      color: var(--m-text);
+      border-radius: var(--m-border-radius-md);
+
+      span {
+        font-size: 12px;
+        color: var(--m-text-light);
+      }
+
+      .legend__marker {
+        width: 12px;
+        height: 12px;
+        background-color: var(--m-success);
+        margin-right: 5px;
+        border-radius: 2px;
+
+        &--canceled {
+          background-color: var(--m-danger);
+        }
+      }
+
+      .legend__quantity {
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--m-text);
+      }
+    }
+  }
+
+  .revenue__by__channels {
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+
+    .item {
+      display: flex;
+      flex-direction: column;
+
+      &__label {
+        font-weight: 400;
+        font-size: 13px;
+      }
+
+      &__value {
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+  }
+}

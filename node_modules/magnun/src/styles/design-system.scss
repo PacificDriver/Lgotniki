@@ -1,0 +1,191 @@
+// :root {
+//     --box-shadow: 0px 0px 0.625rem 0.25rem rgba(18,38,63, 0.05);
+//     --box-shadow-card: 0 0.75rem 1.5rem rgba(18,38,63,.03);
+//     --ct-shadow-dropdown: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15);
+//     --ct-size-title-page: 1.25rem;
+//     --ct-default-padding: 1.25rem;
+//     --ct-color-nav-item: #5a697d;
+//     --dropdown-shadow: 0 8px 10px rgba(9, 30, 66, 0.15), 0 0 1px rgba(9, 30, 66, 0.2);
+
+//     --secondary: #506182;
+//     --info: #29AFD1;
+//     --light: #eef2f7;
+//     --dark: #0d2237;
+//     --white: #fff;
+//     --ct-black: #030c15;
+
+//     // --ct-background-light: #f7f7fb;
+//     // --ct-background-light: #f9f9fb;
+//     // --ct-background-light: #f4f7fb;
+//     --ct-background-light: #f6f7fb;
+
+//     --ct-link-color: #0d6efd;
+
+//     --text-muted: #8a969c;
+//     --bs-code-color: #d63384;
+
+//     --font-size-small: 12px;
+//     --font-size-medium: 14px;
+//     --font-size-big: 22px;
+
+//     --ct-icon-color: #8995a7;
+//     --ct-icon-size: 20px;
+
+//     --ct-title-color: #343a40;
+//     --ct-sub-title-color: #74788D;
+
+//     --ct-default-border: 1px solid #D0D5DD;
+//     --border-color: #D0D5DD;
+
+//     /******************************** Dark ********************************************/
+//     // --ct-background-dark: #212734;
+//     --ct-background-dark: #222735;
+//     --ct-sidebar-background-dark: #293042;
+//     --box-shadow-dark: 0px 0px 10px 2px rgba(3, 17, 46, 0.4);
+//     --ct-dropdown-hover-dark: #3e4555;
+//     --ct-background-card-dark: #2a3042;
+//     --ct-white-dark: rgba(208, 212, 241, 0.8);
+//     --ct-border-color-dark: rgba(255, 255, 255, .2);
+//     --ct-title-color-dark: rgba(255, 255, 255, .9);
+//     --ct-sub-title-color-dark: rgba(255, 255, 255, .6);
+
+//     // Novas definições do desing system
+//     --neutral: #42516D;
+//     --neutral-25: #F9FAFB;
+//     --neutral-50: #F3F4F6;
+//     --neutral-75: #EBEBEF;
+//     --neutral-100: #DEE0E5;
+//     --neutral-200: #C0C6CF;
+//     --neutral-300: #6A768B;
+//     --neutral-400: #5D6B83;
+//     --neutral-500: #4F5E78;
+//     --neutral-600: #42516D;
+//     --neutral-700: #34455F;
+//     --neutral-800: #253758;
+//     --neutral-850: #233453;
+//     --neutral-900: #20304D;
+//     --neutral-950: #1E2C47;
+
+//     --primary: #005FED;
+//     --primary-25: #EBF3FF;
+//     --primary-50: #D9ECFE;
+//     --primary-75: #B3D5FF;
+//     --primary-100: #4B99FF;
+//     --primary-200: #2784FF;
+//     --primary-300: #0064FF;
+//     --primary-400: #0153CC;
+//     --primary-500: #0646A5;
+//     --primary-600: #06429B;
+//     --primary-700: #053C8F;
+//     --primary-800: #053783;
+//     --primary-900: #043278;
+//     --primary-hovered: #0056D5;
+//     --primary-pressed: #004EC2;
+
+//     --danger: #CA371C;
+//     --danger-25: #FDF0ED;
+//     --danger-50: #ffede6;
+//     --danger-75: #FFBDAE;
+//     --danger-100: #FF9074;
+//     --danger-200: #FF734F;
+//     --danger-300: #FF5731;
+//     --danger-400: #DD340A;
+//     --danger-500: #BE2500;
+//     --danger-600: #AF2300;
+//     --danger-700: #A22000;
+//     --danger-800: #941E00;
+//     --danger-900: #871B00;
+//     --danger-hovered: #B63119;
+//     --danger-pressed: #A61917;
+
+//     --warning: #F5CD47;
+//     --warning-25: #FEFBF2;
+//     --warning-50: #FFFBE7;
+//     --warning-75: #FFF1B4;
+//     --warning-100: #FFE381;
+//     --warning-200: #FFC501;
+//     --warning-300: #FFAB01;
+//     --warning-400: #FF9A1F;
+//     --warning-500: #FF8B01;
+//     --warning-600: #ED8200;
+//     --warning-700: #DB7800;
+//     --warning-800: #C86E00;
+//     --warning-900: #B66400;
+//     --warning-hovered: #DDB945;
+//     --warning-pressed: #C9A83A;
+
+//     --success: #32A877;
+//     --success-25: #EFFAF6;
+//     --success-50: #E3FDF0;
+//     --success-75: #ABF6D2;
+//     --success-100: #7AF2C0;
+//     --success-200: #57D9A4;
+//     --success-300: #36B37F;
+//     --success-400: #01885A;
+//     --success-500: #016745;
+//     --success-600: #015E3F;
+//     --success-700: #01573A;
+//     --success-800: #014F35;
+//     --success-900: #014830;
+
+//     // z-index
+// 	--z-index-sticky: 1020;
+// 	--z-index-fixed: 1030;
+// 	--z-index-modal-backdrop: 1040;
+// 	--z-index-offcanvas: 1050;
+// 	--z-index-modal: 1060;
+// 	--z-index-mask: 1061;
+// 	--z-index-dropdown: 1062;
+// 	--z-index-popover: 1070;
+// 	--z-index-tooltip: 1080;
+// 	--z-index-lazy-load: 1090;
+
+//     // background
+//     --background-color: #f7f7fb;
+
+//     // shadow
+//     --box-shadow: 0 0.75rem 1.5rem rgba(18, 38, 63, .03);
+
+// 	// border
+// 	--border-radius: 4px;
+// 	--border-radius-md: 8px;
+// 	--border-radius-xl: 16px;
+//     --m-default-border: 1.5px solid #D0D5DD;
+//     --border-color: #D0D5DD;
+
+//     // icon color
+//     --icon-color: #7D87A3;
+
+// 	// padding
+// 	--padding-default: 16px;
+// 	--padding-row: 24px;
+
+// 	// transition
+// 	--transition-slow: all ease-out 1s;
+// 	--transition-default: all ease-out 0.6s;
+// 	--transition-fast: all ease-out 0.2s;
+// 	--transition-second-slow: 0.3s;
+// 	--transition-second-default: 0.6s;
+// 	--transition-second-fast: 1s;
+
+//     --text: #162949;
+//     --text-light: #162949;
+// }
+
+// // [data-theme="dark"] {
+// //     --ct-black: #f6f6f6;
+// //     --dark: rgba(255, 255, 255, .7);
+// //     --ct-sub-title-color: rgba(208, 212, 241, 0.68);
+// //     --ct-title-color: rgba(255, 255, 255, .8);
+// //     --ct-icon-color: rgba(208, 212, 241, 0.68);
+// //     --light: #4b525b;
+// //     --border-color: rgba(255, 255, 255, .3);
+
+// //     --text: #f6f6f6; // #cfcde4
+// //     --text-light: #C4CCE3;
+// //     --primary: #5D9EF9;
+// //     --warning: #F4C731;
+// //     --danger: #F3766D;
+// //     --success: #50C996;
+
+// // }

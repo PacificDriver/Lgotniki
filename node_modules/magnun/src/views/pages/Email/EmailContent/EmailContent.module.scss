@@ -1,0 +1,11 @@
+.email-content-container {
+  display: grid;
+  grid-template-columns: 23% 77%;
+  height: calc(100vh - 70px);
+  background-color: var(--m-email-background-color);
+
+  &--mobile {
+    grid-template-columns: 1fr;
+    // height: calc(100vh - 120px);
+  }
+}

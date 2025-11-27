@@ -1,0 +1,64 @@
+.vector__map {
+  height: 300px;
+  width: 600px;
+  padding: 0 20px;
+}
+
+.marketing__goal {
+  background-color: var(--m-card-background-color);
+  box-shadow: var(--m-box-shadow);
+
+  .reset-shadow {
+    box-shadow: unset;
+    border-radius: 0px;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 16px 16px;
+    background-color: var(--m-card-background-color);
+
+    .info {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      &__label {
+        color: var(--m-text-light);
+        font-size: 12px;
+        margin-left: 5px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      &__value {
+        color: var(--m-text);
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 23px;
+      }
+    }
+  }
+}
+
+.sales__by__country {
+  background-color: var(--m-card-background-color);
+  box-shadow: var(--m-box-shadow);
+  margin-top: 16px;
+
+  .reset-shadow {
+    box-shadow: unset;
+    border-radius: 0px;
+
+    > div {
+      box-shadow: unset;
+    }
+  }
+
+  .list__items {
+    padding: 8px 16px;
+  }
+}

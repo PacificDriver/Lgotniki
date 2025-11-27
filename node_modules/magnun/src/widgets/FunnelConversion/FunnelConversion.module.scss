@@ -1,0 +1,61 @@
+.funnel-conversion {
+  width: 100%;
+  position: relative;
+  padding: 0 16px 16px;
+
+  &__bars {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+
+    &__bar {
+      height: 12px;
+      border-radius: 2px;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 24px;
+
+    .metric {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &__data {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+
+        .conversion-rate {
+          font-weight: 600;
+          font-size: 16px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--m-text);
+
+          &__rectangle {
+            width: 6px;
+            height: 15px;
+            background-color: var(--m-subtle-xxbolder);
+            border-radius: 2px;
+          }
+        }
+      }
+
+      &__label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--m-text-light);
+        font-size: 13px;
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+.tag-badge-container {
+  min-width: 10px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  min-height: 10px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  max-height: -webkit-fit-content;
+  max-height: -moz-fit-content;
+  max-height: fit-content;
+  height: fit-content;
+  // font-weight: 700;
+  z-index: 1;
+  border-radius: var(--m-border-radius);
+  font-size: 12px;
+  padding: 0.5em 0.8em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &.rounded {
+    border-radius: 50%;
+  }
+
+  &.top {
+    position: absolute;
+    top: -6px;
+    display: flex;
+    justify-content: flex-end;
+    right: -5px;
+  }
+
+  &.badge-primary {
+    background-color: var(--m-primary);
+    color: var(--m-white);
+  }
+
+  &.badge-primary-outline {
+    background-color: var(--m-background-subtle-primary);
+    color: var(--m-primary);
+  }
+
+  &.badge-danger {
+    background-color: var(--m-danger);
+    color: var(--m-white);
+  }
+
+  &.badge-danger-outline {
+    background-color: rgba(#ca371c, 0.1);
+    color: var(--m-danger);
+  }
+
+  &.badge-warning {
+    background-color: var(--m-warning);
+    color: var(--m-text);
+  }
+
+  &.badge-warning-outline {
+    background-color: var(--m-background-subtle-warning);
+    color: var(--m-warning);
+  }
+
+  &.badge-success {
+    background-color: var(--m-success);
+    color: var(--m-white);
+  }
+
+  &.badge-success-outline {
+    background-color: var(--m-background-subtle-success);
+    color: var(--m-success);
+  }
+
+  &.badge-dark {
+    background-color: var(--m-text);
+    color: var(--m-white);
+  }
+}

@@ -1,0 +1,64 @@
+.audio-player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 200px;
+
+  &__control-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--m-white);
+    color: #5353ef;
+    width: 25px;
+    height: 25px;
+
+    &--received {
+      background-color: var(--m-text);
+      color: var(--m-white);
+    }
+
+    &--play {
+      margin-left: 2px;
+    }
+
+    svg {
+      font-size: 16px;
+    }
+  }
+
+  &__wavesurfer {
+    flex-grow: 1;
+    height: 20px;
+    width: 150px;
+    max-width: 150px;
+  }
+
+  &__timer {
+    width: 38px;
+    height: 16px;
+    font-size: 11px;
+    background-color: #eeeefe;
+    color: #5353ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    padding: 0 6px;
+    box-sizing: border-box;
+
+    &--time {
+      line-height: 16px;
+    }
+
+    &--received {
+      background-color: var(--m-text);
+      color: var(--m-white);
+    }
+  }
+}

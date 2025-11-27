@@ -1,0 +1,29 @@
+.codesnippet-header {
+  padding: 6px 16px;
+  font-size: 12px;
+  background-color: transparent;
+  position: absolute;
+  top: 10px;
+  right: 0;
+
+  &__copy {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+
+    &--icon {
+      font-size: 20px;
+    }
+  }
+}
+
+.language-jsx {
+  background-color: #f0f2f6 !important;
+}
+
+[m-data-theme='dark'] {
+  .language-jsx {
+    background-color: transparent !important;
+  }
+}

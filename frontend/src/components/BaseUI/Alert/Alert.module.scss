@@ -1,0 +1,126 @@
+.alert-container {
+  width: 100%;
+  position: relative;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    font-weight: 400;
+    font-size: 13px;
+    transition: ease-in-out 0.6s;
+
+    &--close {
+      cursor: pointer;
+      color: #6d5e5e;
+      font-size: 16px;
+      font-weight: 400;
+
+      &:hover {
+        color: var(--black);
+      }
+    }
+
+    &--children {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    &--alert-primary {
+      background-color: rgba(var(--primary-rgb), 0.2);
+      color: #4b53b5;
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+    }
+
+    &--alert-secondary {
+      background-color: rgba(var(--secondary-rgb), 0.2);
+      color: #4b5d6c;
+      border: 1px solid rgba(var(--secondary-rgb), 0.2);
+    }
+
+    &--alert-success {
+      background-color: rgba(var(--success-rgb), 0.2);
+      color: #246c58;
+      border: 1px solid rgba(var(--ct-sucsess-rgb), 0.2);
+    }
+
+    &--alert-danger {
+      background-color: rgba(#ca371c, 0.2);
+      color: #603f46;
+      border: 1px solid rgba(#ca371c, 0.2);
+    }
+
+    &--alert-warning {
+      background-color: rgba(var(--warning-rgb), 0.2);
+      border: 1px solid rgba(var(--warning-rgb), 0.2);
+      color: #8d7b5b;
+    }
+
+    &--alert-info {
+      background-color: rgba(var(--info-rgb), 0.2);
+      border: 1px solid rgba(var(--info-rgb), 0.2);
+      color: #51808e;
+    }
+
+    &--alert-light {
+      background-color: rgba(var(--light-rgb), 0.2);
+      color: #445368;
+      border: 1px solid rgba(var(--light-rgb), 0.2);
+    }
+
+    &--alert-dark {
+      background-color: rgba(var(--dark-rgb), 0.2);
+      border: 1px solid rgba(var(--dark-rgb), 0.2);
+      color: #445368;
+    }
+  }
+}
+
+[data-theme='dark'] {
+  .alert-container {
+    &__content {
+      &--close {
+        color: var(--dark);
+
+        &:hover {
+          color: var(--black);
+        }
+      }
+
+      &--alert-primary {
+        color: lighten($color: #4083f8, $amount: 15);
+      }
+
+      &--alert-secondary {
+        color: lighten($color: #506182, $amount: 15);
+      }
+
+      &--alert-success {
+        color: lighten($color: #0acf97, $amount: 15);
+      }
+
+      &--alert-danger {
+        color: lighten($color: #fa5c7c, $amount: 15);
+      }
+
+      &--alert-warning {
+        color: lighten($color: #ffc35a, $amount: 15);
+      }
+
+      &--alert-info {
+        color: lighten($color: #29afd1, $amount: 15);
+      }
+
+      &--alert-light {
+        color: lighten($color: #eef2f7, $amount: 15);
+      }
+
+      &--alert-dark {
+        color: lighten($color: #0d2237, $amount: 15);
+      }
+    }
+  }
+}

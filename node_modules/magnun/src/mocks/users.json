@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "value": 1,
+    "name": "Sophia Amelia Johnson",
+    "image": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "uuid": "4c2eec32-431b-4df2-8dbb-f4c5d12df9c2",
+    "active": true,
+    "email": "sophia.johnson@example.com",
+    "bio": "Especialista em marketing digital, apaixonada por tecnologia e inovação. Com mais de 10 anos de experiência, busca criar soluções criativas e eficazes para grandes marcas."
+  },
+  {
+    "id": 2,
+    "value": 2,
+    "name": "Oliver Benjamin Smith",
+    "image": "https://images.unsplash.com/photo-1583692331507-fc0bd348695d?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "uuid": "b3b7f2a8-14f0-4a5d-b929-cb5a9d8c2f5a",
+    "active": true,
+    "email": "oliver.smith@example.com",
+    "bio": "Desenvolvedor full-stack com forte conhecimento em JavaScript e PHP. Ama resolver problemas complexos e está sempre atualizado com as últimas tendências de tecnologia."
+  },
+  {
+    "id": 3,
+    "value": 3,
+    "name": "Mia Isabella Jackson",
+    "image": "https://images.unsplash.com/photo-1614436086835-d18683eb24f8?q=80&w=1914&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "uuid": "4c4d5e6f-7g8h-9i0j-1k2l-m3nopqrst",
+    "active": false,
+    "email": "mia.jackson@example.com",
+    "bio": "Engenheira de software com foco em IA e aprendizado de máquina. Adora criar soluções inovadoras que automatizam processos e melhoram a eficiência das empresas."
+  },
+  {
+    "id": 4,
+    "value": 4,
+    "name": "Ava Emily Thomas",
+    "image": "https://images.unsplash.com/photo-1613365765813-e29fea16ecaa?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "uuid": "2a2b3c4d-5e6f-7g8h-9i0j-k1lmnopqrs",
+    "active": false,
+    "email": "ava.thomas@example.com",
+    "bio": "Gestora de projetos com mais de 8 anos de experiência no setor de TI. Sua especialidade é coordenar equipes para entregar projetos com alta qualidade e dentro do prazo."
+  },
+  {
+    "id": 5,
+    "value": 5,
+    "name": "Isabella Ava Davies",
+    "image": "https://images.unsplash.com/photo-1630255733038-0eaa251036c9?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "uuid": "b7e2f3e5-1c8e-4cbb-9261-df6a4f023f55",
+    "active": true,
+    "email": "isabella.davies@example.com",
+    "bio": "Analista de dados com paixão por extrair insights valiosos de grandes volumes de informações. Expert em SQL, Python e visualização de dados."
+  },
+  {
+    "id": 6,
+    "value": 6,
+    "name": "Amelia Emily Brown",
+    "image": "https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "uuid": "f8bca43d-ef18-4ac6-a9e8-6d12f4c6c11b",
+    "active": false,
+    "email": "amelia.brown@example.com",
+    "bio": "Especialista em segurança da informação, focada em proteger dados e sistemas. Certificada em CISSP e sempre à frente das novas ameaças cibernéticas."
+  },
+  {
+    "id": 7,
+    "value": 7,
+    "name": "Liam Jacob Williams",
+    "image": "",
+    "uuid": "dc8e0bce-8c21-4e5a-b7f7-d7e5d3a1b7b9",
+    "active": false,
+    "email": "liam.williams@example.com",
+    "bio": "Designer gráfico com foco em UX/UI. Criativo e com atenção aos detalhes, trabalha para criar interfaces bonitas e funcionais para aplicativos e sites."
+  },
+  {
+    "id": 8,
+    "value": 8,
+    "name": "Noah Ethan Taylor",
+    "image": "",
+    "uuid": "e3e1f0e6-16d8-4cb7-95ed-29045dcd3f45",
+    "active": false,
+    "email": "noah.taylor@example.com",
+    "bio": "Consultor de TI com vasta experiência em redes e infraestrutura. Ajuda empresas a melhorar a eficiência dos seus sistemas e processos tecnológicos."
+  },
+  {
+    "id": 9,
+    "value": 9,
+    "name": "Jacob William Wilson",
+    "image": "",
+    "uuid": "1a1b1c2d-3e4f-5g6h-7i8j-9k0lmnopqr",
+    "active": false,
+    "email": "jacob.wilson@example.com",
+    "bio": "Desenvolvedor mobile com foco em apps iOS e Android. Trabalha em projetos inovadores, sempre buscando as melhores práticas e tecnologias."
+  },
+  {
+    "id": 10,
+    "value": 10,
+    "name": "Lucas Ethan Roberts",
+    "image": "",
+    "uuid": "3b3c4d5e-6f7g-8h9i-0j1k-l2mnopqrst",
+    "active": false,
+    "email": "lucas.roberts@example.com",
+    "bio": "Arquiteto de soluções, responsável por projetar e implementar infraestruturas escaláveis e seguras em grandes empresas de tecnologia."
+  },
+  {
+    "id": 11,
+    "value": 11,
+    "name": "Ethan Noah Evans",
+    "image": "",
+    "uuid": "5d5e6f7g-8h9i-0j1k-2l3m-n4opqrstuv",
+    "active": false,
+    "email": "ethan.evans@example.com",
+    "bio": "Product Manager com ampla experiência em startups e produtos digitais. Adora construir produtos centrados no usuário que resolvam problemas reais."
+  },
+  {
+    "id": 12,
+    "value": 12,
+    "name": "Harper Sophia Johnson",
+    "image": "",
+    "uuid": "6e6f7g8h-9i0j-1k2l-3m4n-o5pqrstuvw",
+    "active": false,
+    "email": "harper.johnson@example.com",
+    "bio": "Engenheira de DevOps especializada em automatização de pipelines e implementação de sistemas ágeis. Trabalha para garantir a estabilidade e eficiência no ciclo de desenvolvimento."
+  },
+  {
+    "id": 13,
+    "value": 13,
+    "name": "William Jacob Moore",
+    "image": "",
+    "uuid": "7f7g8h9i-0j1k-2l3m-4n5o-p6qrstuvwx",
+    "active": false,
+    "email": "william.moore@example.com",
+    "bio": "Cientista de dados apaixonado por inteligência artificial e machine learning. Ajuda as empresas a tomar decisões baseadas em dados robustos."
+  },
+  {
+    "id": 14,
+    "value": 14,
+    "name": "James Alexander Martinez",
+    "image": "",
+    "uuid": "8g8h9i0j-1k2l-3m4n-5o6p-q7rstuvwxy",
+    "active": false,
+    "email": "james.martinez@example.com",
+    "bio": "Administrador de banco de dados com expertise em segurança e otimização de desempenho. Ajuda a garantir que os dados da empresa estejam sempre seguros e acessíveis."
+  },
+  {
+    "id": 15,
+    "value": 15,
+    "name": "Ella Sophia Hernandez",
+    "image": "",
+    "uuid": "9h9i0j1k-2l3m-4n5o-6p7q-r8stuvwxyz",
+    "active": false,
+    "email": "ella.hernandez@example.com",
+    "bio": "Especialista em suporte técnico, com paixão por resolver problemas e ajudar os usuários a maximizar o uso da tecnologia no dia a dia."
+  },
+  {
+    "id": 16,
+    "value": 16,
+    "name": "Henry Jackson Lee",
+    "image": "",
+    "uuid": "0i0j1k2l-3m4n-5o6p-7q8r-s9tuvwxyz",
+    "active": false,
+    "email": "henry.lee@example.com",
+    "bio": "Arquiteto de software com foco em sistemas escaláveis e distribuídos. Constrói soluções que ajudam as empresas a crescer de forma sustentável."
+  },
+  {
+    "id": 17,
+    "value": 17,
+    "name": "Lucas Jackson Walker",
+    "image": "",
+    "uuid": "a1b2c3d4-e5f6-7g8h-9i0j-1k2lmnopqrst",
+    "active": false,
+    "email": "lucas.walker@example.com",
+    "bio": "Desenvolvedor front-end apaixonado por criar interfaces modernas e responsivas. Sempre busca melhorar a experiência do usuário em aplicativos web."
+  },
+  {
+    "id": 18,
+    "value": 18,
+    "name": "Charlotte Sophia Harris",
+    "image": "",
+    "uuid": "c2c3d4e5-6f7g-8h9i-0j1k-2l3mnopqrst",
+    "active": false,
+    "email": "charlotte.harris@example.com",
+    "bio": "Designer de produto com foco em estética e funcionalidade. Criativa e detalhista, busca sempre equilibrar o design visual e a usabilidade."
+  },
+  {
+    "id": 19,
+    "value": 19,
+    "name": "Alexander Daniel Martin",
+    "image": "",
+    "uuid": "d3d4e5f6-7g8h-9i0j-1k2l-3mnopqrstuv",
+    "active": false,
+    "email": "alexander.martin@example.com",
+    "bio": "Gestor de TI com mais de 15 anos de experiência, especializado em liderar equipes técnicas para entregar projetos complexos e de alta qualidade."
+  },
+  {
+    "id": 20,
+    "value": 20,
+    "name": "Amelia Isabella Garcia",
+    "image": "",
+    "uuid": "e4e5f6g7-8h9i-0j1k-2l3m-4nopqrstuvw",
+    "active": false,
+    "email": "amelia.garcia@example.com",
+    "bio": "Consultora de negócios com foco em transformação digital e inovação. Ajuda empresas a otimizar processos e implementar tecnologias emergentes."
+  }
+]

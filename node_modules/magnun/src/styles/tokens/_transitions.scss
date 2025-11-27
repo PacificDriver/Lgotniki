@@ -1,0 +1,15 @@
+/******************************
+*  Transitions Tokens
+******************************/
+:root {
+  --m-transition-slow: all ease-out 1s;
+  --m-transition-default: all ease-out 0.6s;
+  --m-transition-fast: all ease-out 0.2s;
+  --m-transition-second-slow: 0.3s;
+  --m-transition-second-default: 0.6s;
+  --m-transition-second-fast: 1s;
+}
+
+.text {
+  color: var(--ma-transition-default);
+}

@@ -1,0 +1,24 @@
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &--input {
+    height: 45px;
+    border-radius: 4px;
+    padding: 0 20px 0 40px;
+    border: none;
+    background: #f0f3f8cf;
+    min-width: 300px;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+
+  &--icon {
+    position: absolute;
+    left: 10px;
+    color: var(--m-text-muted);
+  }
+}

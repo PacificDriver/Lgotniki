@@ -1,0 +1,12 @@
+.chat-container {
+  background-color: var(--m-chat-background-color);
+  padding: 16px;
+  height: calc(100vh - 70px);
+
+  > div {
+    &:first-child {
+      padding: 0 !important;
+      margin: 0;
+    }
+  }
+}

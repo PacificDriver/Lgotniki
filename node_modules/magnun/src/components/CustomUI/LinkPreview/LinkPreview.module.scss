@@ -1,0 +1,120 @@
+.link-preview {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  height: 85px;
+  background-color: var(--m-white);
+  border: 1px solid var(--m-border);
+
+  .image-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+
+  .icon-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--m-subtle);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+
+    svg {
+      font-size: 28px;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 8px;
+    cursor: pointer;
+    border-left: none;
+    height: 100%;
+
+    .title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--m-text);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .domain {
+      font-size: 12px;
+      color: #888;
+    }
+  }
+}
+
+.link-compact {
+  color: var(--m-primary);
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--m-border);
+  padding: 2px 4px;
+  border-radius: var(--m-border-radius);
+  cursor: pointer;
+  z-index: 10 !important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--m-primary);
+
+    // &::after {
+    //     content: attr(data-url);
+    //     position: fixed;
+    //     bottom: 0;
+    //     left: 0;
+    //     background-color: var(--m-subtle-bolder);
+    //     color: var(--m-text);
+    //     padding: 4px 8px;
+    //     border-radius: 4px;
+    //     font-size: 12px;
+    //     z-index: 1000;
+    //     white-space: nowrap;
+    //     width: -webkit-fit-content;
+    //     width: -moz-fit-content;
+    //     width: fit-content;
+    //     height: 18px;
+    // }
+  }
+
+  &__icon {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__link {
+    width: 90%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

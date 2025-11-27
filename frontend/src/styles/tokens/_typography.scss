@@ -1,0 +1,50 @@
+/******************************
+*  Typography Tokens
+******************************/
+:root {
+  /* Sizes */
+  --m-font-size-050: 0.625rem; /* 10px */
+  --m-font-size-075: 0.75rem; /* 12px */
+  --m-font-size-100: 0.875rem; /* 14px */
+  --m-font-size-150: 1rem; /* 16px */
+  --m-font-size-200: 1.125rem; /* 18px */
+  --m-font-size-250: 1.25rem; /* 20px */
+  --m-font-size-300: 1.5rem; /* 24px */
+  --m-font-size-350: 2rem; /* 32px */
+  --m-font-size-400: 2.5rem; /* 40px */
+  --m-font-size-500: 3rem; /* 48px */
+
+  /* LineHeights */
+  --m-font-lineHeight-050: 1.25rem; /* 20px */
+  --m-font-lineHeight-075: 1.375rem; /* 22px */
+  --m-font-lineHeight-100: 1.5rem; /* 24px */
+  --m-font-lineHeight-150: 1.625rem; /* 26px */
+  --m-font-lineHeight-200: 1.75rem; /* 28px */
+  --m-font-lineHeight-250: 1.875rem; /* 30px */
+  --m-font-lineHeight-300: 2.25rem; /* 36px */
+  --m-font-lineHeight-400: 2.75rem; /* 44px */
+  --m-font-lineHeight-500: 3.375rem; /* 54px */
+
+  /* Weights */
+  --m-font-weight-light: 300;
+  --m-font-weight-regular: 400;
+  --m-font-weight-medium: 500;
+  --m-font-weight-semibold: 600;
+  --m-font-weight-bold: 700;
+
+  /* Headings */
+  --m-font-heading-xxl: 800 5.25rem / 6rem; /* 84px / 96px */
+  --m-font-heading-xl: 700 4rem / 4.75rem; /* 64px / 76px */
+  --m-font-heading-lg: 700 3rem / 3.75rem; /* 48px / 60px */
+  --m-font-heading-md: 600 2.5rem / 3.25rem; /* 40px / 52px */
+  --m-font-heading-sm: 600 2rem / 2.75rem; /* 32px / 44px */
+  --m-font-heading-xs: 600 1.5rem / 2.25rem; /* 24px / 36px */
+
+  /* Body */
+  --m-font-body-xxl: 500 1.25rem / 1.875rem; /* 20px / 30px */
+  --m-font-body-xl: 400 1.125rem / 1.75rem; /* 18px / 28px */
+  --m-font-body-lg: 500 1.125rem / 1.75rem; /* 18px / 28px */
+  --m-font-body-md: 400 1rem / 1.625rem; /* 16px / 26px */
+  --m-font-body-sm: 400 0.875rem / 1.5rem; /* 14px / 24px */
+  --m-font-body-xs: 400 0.75rem / 1.375rem; /* 12px / 22px */
+}

@@ -1,0 +1,9 @@
+.float-window {
+  z-index: var(--m-z-index-dropdown);
+  position: absolute;
+  width: 100%;
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+}

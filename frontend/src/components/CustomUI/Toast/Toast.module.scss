@@ -1,0 +1,228 @@
+.toast-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: fixed;
+  z-index: var(--m-z-index-sticky);
+  bottom: 40px;
+  left: 40px;
+  color: var(--m-white);
+  width: 400px;
+  max-width: 400px;
+
+  &__toast {
+    background-color: #1f1f1f;
+    padding: 16px;
+    font-size: 13px;
+    border-radius: 4px;
+    color: var(--m-subtle-xbolder);
+    transition: opacity ease-in-out 0.2s;
+    bottom: 40px;
+    transform: translateX(-100%);
+    box-shadow:
+      0 0.5rem 0.75rem #091e4226,
+      0 0 0.0625rem #091e424f;
+    -webkit-animation: slideInLeft 0.3s ease-in forwards;
+    animation: slideInLeft 0.3s ease-in forwards;
+    border: 1px solid transparent;
+
+    &--title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+
+    &--icon-title {
+      font-size: 24px;
+    }
+
+    &--close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      cursor: pointer;
+
+      svg {
+        font-size: 18px;
+      }
+    }
+
+    &--expand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+
+      svg {
+        font-size: 20px;
+      }
+    }
+
+    &--rotate {
+      transform: rotate(180deg);
+    }
+
+    .toast-content {
+      height: 0;
+      visibility: hidden;
+      box-sizing: border-box;
+      overflow: hidden;
+
+      &--visible {
+        height: 100%;
+        visibility: visible;
+      }
+
+      &__description {
+        margin-left: 32px;
+        font-size: 14px;
+        font-weight: 400;
+        width: 80%;
+        max-width: 80%;
+      }
+
+      &__buttons {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 10px;
+
+        &--button {
+          padding: 0 12px;
+          font-size: 14px;
+          font-weight: 500;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          border-radius: var(--m-border-radius);
+          line-height: 24px;
+        }
+
+        &--warning,
+        &--danger {
+          background-color: rgba(0, 0, 0, 0.14);
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+          }
+
+          &:active {
+            background-color: rgba(0, 0, 0, 0.3);
+          }
+        }
+
+        &--info,
+        &--success {
+          background-color: rgba(0, 0, 0, 0.2);
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.28);
+          }
+
+          &:active {
+            background-color: rgba(0, 0, 0, 0.32);
+          }
+        }
+
+        &--link {
+          color: var(--m-primary);
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    &.default,
+    &.link {
+      background-color: var(--m-white);
+      color: var(--m-text);
+
+      .info-icon {
+        color: var(--m-primary);
+      }
+    }
+
+    &.success {
+      background-color: var(--m-success);
+      color: var(--m-white);
+    }
+
+    &.warning {
+      background-color: var(--m-warning);
+      color: #172b4d;
+    }
+
+    &.danger {
+      background-color: var(--m-danger);
+      color: var(--m-white);
+    }
+
+    &.info {
+      background-color: var(--m-neutral);
+      color: var(--m-white);
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+[m-data-theme='dark'] {
+  .toast-container {
+    &__toast {
+      &.default,
+      &.link,
+      &.info {
+        background-color: #34455f;
+        color: var(--m-text);
+
+        .info-icon {
+          color: var(--m-primary);
+        }
+
+        border-color: rgba($color: #fff, $alpha: 0.2);
+      }
+
+      &.success,
+      &.warning,
+      &.danger {
+        color: #162949;
+      }
+    }
+  }
+}
+
+@-webkit-keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  75% {
+    transform: translateX(-20%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  75% {
+    transform: translateX(-20%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}

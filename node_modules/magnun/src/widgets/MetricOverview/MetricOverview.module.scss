@@ -1,0 +1,106 @@
+.metric-overview {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 16px 16px;
+  gap: 24px;
+
+  &__infos {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    &__value {
+      font-size: 24px;
+      font-weight: 600;
+
+      &--money {
+        color: var(--m-text);
+
+        &::first-letter {
+          color: var(--m-text-muted);
+          font-size: 12px;
+          vertical-align: super;
+          margin-right: 2px;
+        }
+      }
+    }
+
+    &__description {
+      display: flex;
+      flex-wrap: wrap;
+      width: 70%;
+      color: var(--m-text-muted);
+    }
+  }
+
+  &__chart {
+    .bars {
+      height: 70px;
+      max-height: 70px;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+
+      &__bar {
+        width: 20px;
+        transition: height 0.5s ease-in-out;
+        position: relative;
+
+        .tooltip {
+          position: absolute;
+          top: -80px;
+          left: 0;
+          background-color: var(--m-tooltip-background-color);
+          box-shadow: var(--m-dropdown-shadow);
+          min-width: 140px;
+          border-radius: var(--m-border-radius);
+          transition:
+            opacity 0.3s ease-in-out,
+            visibility 0.3s ease-in-out;
+          z-index: var(--m-z-index-dropdown);
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          display: flex;
+          flex-direction: column;
+          border: 1px solid var(--m-border-tooltip);
+
+          > span {
+            color: var(--m-text);
+
+            &:first-child {
+              padding: 6px 6px 0;
+              font-size: 12px;
+            }
+
+            &:last-child {
+              padding: 0 8px 8px;
+              font-weight: 600;
+            }
+          }
+        }
+
+        &:hover {
+          .tooltip {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+
+    .labels {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+
+      &__label {
+        font-size: 12px;
+        color: var(--m-text-light);
+      }
+    }
+  }
+}

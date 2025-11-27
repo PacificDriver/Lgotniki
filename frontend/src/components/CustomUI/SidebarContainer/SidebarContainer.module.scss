@@ -1,0 +1,25 @@
+.side-container {
+  width: 35vw;
+  background: var(--m-sidebar-background-color);
+  height: calc(100% - 70px);
+  position: fixed;
+  top: 70px;
+  bottom: 0;
+  right: 0;
+  box-shadow: var(--m-box-shadow);
+  padding: 20px;
+  overflow-y: auto;
+  transform: translateX(35vw);
+  transition: transform 0.4s ease-in-out;
+  border-left: 1px solid var(--m-border-color);
+  color: var(--m-text);
+
+  &--title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  &--opened {
+    transform: translateX(0);
+  }
+}

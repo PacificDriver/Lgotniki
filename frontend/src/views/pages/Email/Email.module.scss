@@ -1,0 +1,11 @@
+.email-container {
+  background-color: var(--m-email-background-color);
+  padding: 0 16px 0 0;
+
+  > div {
+    &:first-child {
+      padding: 0 !important;
+      margin: 0;
+    }
+  }
+}

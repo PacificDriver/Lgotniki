@@ -1,0 +1,104 @@
+{
+  "1": [
+    {
+      "content": "Hi Beatriz, see you today?",
+      "date": "2023-02-12 11:19:21",
+      "type": "sender"
+    },
+    {
+      "content": "Hi Sarah, let's go!",
+      "date": "2023-02-12 11:34:10",
+      "type": "addressee"
+    },
+    {
+      "content": "At 19:19?",
+      "date": "2023-02-12 11:34:59",
+      "type": "addressee"
+    },
+    {
+      "content": "Perfect. See you at 19:00",
+      "date": "2023-02-12 12:38:21",
+      "type": "sender"
+    },
+    {
+      "content": "Beatriz, I waited for you yesterday but you didn't show up. What happened?",
+      "date": "2023-02-12 12:38:47",
+      "type": "sender"
+    },
+    {
+      "content": "Sorry Sarah. My phone was dead and I couldn't let you know that I would be able to come again.",
+      "date": "2023-02-13 10:18:35",
+      "type": "addressee"
+    },
+    {
+      "content": "Okay. :(",
+      "date": "2023-02-13 10:25:35",
+      "type": "sender"
+    },
+    {
+      "content": "When you want to leave again, call!",
+      "date": "2023-02-13 10:25:58",
+      "type": "sender"
+    },
+    {
+      "content": "Okay. Let's set up a new meeting",
+      "date": "2023-02-13 12:11:10",
+      "type": "addressee"
+    }
+  ],
+  "2": [
+    {
+      "content": "Hi Jennyfer",
+      "date": "2023-02-14 12:11:10",
+      "type": "addressee"
+    },
+    {
+      "content": "Did you do your college work yesterday?",
+      "date": "2023-02-14 12:11:19",
+      "type": "addressee"
+    },
+    {
+      "content": "If you have done what you can tell me, I thank you very much",
+      "date": "2023-02-14 12:11:48",
+      "type": "addressee"
+    },
+    {
+      "content": "Hi Beatriz",
+      "date": "2023-02-14 17:14:26",
+      "type": "sender"
+    },
+    {
+      "content": "I did. Give me your email and I'll send it to you.",
+      "date": "2023-02-14 17:16:26",
+      "type": "sender"
+    }
+  ],
+  "3": [
+    {
+      "content": "Hi Beatriz",
+      "date": "2023-02-14 10:16:26",
+      "type": "sender"
+    },
+    {
+      "content": "Miss you",
+      "date": "2023-02-14 10:16:56",
+      "type": "sender"
+    },
+    {
+      "content": "When will I see you again? :)",
+      "date": "2023-02-14 10:17:16",
+      "type": "sender"
+    },
+    {
+      "content": "Hi Jonathan",
+      "date": "2023-02-14 12:13:16",
+      "type": "addressee"
+    },
+    {
+      "content": "See you today at college",
+      "date": "2023-02-14 12:14:01",
+      "type": "addressee"
+    }
+  ],
+  "4": []
+}

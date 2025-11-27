@@ -1,0 +1,247 @@
+.email-list-app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: var(--m-email-background-color);
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 50px;
+  color: var(--m-text);
+
+  &__header {
+    background-color: var(--m-email-background-color);
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.06);
+
+    &--title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    &--search-icon {
+      font-size: 20px;
+    }
+  }
+
+  &__email-tabs {
+    width: 100%;
+    overflow: hidden;
+    padding: 8px 16px;
+
+    .tabs {
+      width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+      display: flex;
+      gap: 16px;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &__tab {
+        cursor: pointer;
+        white-space: nowrap;
+        font-size: 14px;
+        color: var(--m-text);
+        padding: 8px 20px;
+        background-color: #f1f2f4;
+        color: var(--m-text-muted);
+        font-weight: 500;
+        border: 1px solid transparent;
+        border-radius: var(--m-border-radius);
+
+        &--active {
+          background-color: #005fed14;
+          color: var(--m-primary);
+          border-color: var(--m-primary);
+        }
+      }
+    }
+  }
+
+  &__content {
+    padding: 16px;
+    padding-bottom: 16px;
+
+    .email-list {
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      &__items {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        .infos {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          // line-height: 20px;
+
+          &__sender {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+
+            &--name {
+              font-size: 14px;
+              // color: #7F899C;
+              color: var(--m-text);
+
+              &--read {
+                font-weight: 600;
+              }
+            }
+
+            &--attachment {
+              display: flex;
+              color: var(--m-text-muted);
+            }
+
+            &--date {
+              font-size: 12px;
+              // color: #056CF2;
+              font-weight: 500;
+              color: var(--m-text-muted);
+            }
+          }
+
+          &__subject {
+            font-size: 12px;
+            // font-weight: 500;
+            // color: #7F899C;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            color: var(--m-text);
+
+            &--read {
+              color: var(--m-text);
+            }
+
+            &__icons {
+              display: flex;
+              align-items: flex-end;
+              gap: 4px;
+
+              svg {
+                font-size: 14px;
+                color: var(--m-icon-color);
+              }
+
+              &--starred {
+                color: #f7ca4c !important;
+              }
+
+              &--ttachment {
+                transform: rotate(-45deg);
+              }
+            }
+          }
+
+          &__message {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+
+            &--content {
+              font-size: 12px;
+              color: #7f899c;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+
+            &--starred {
+              color: #f7ca4c !important;
+            }
+
+            svg {
+              font-size: 14px;
+              color: #7f899c;
+            }
+          }
+        }
+      }
+
+      &__no-data {
+        min-height: 30vh;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+
+        &--message {
+          font-size: 18px;
+          font-family: 600;
+        }
+      }
+    }
+  }
+
+  &__add {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    background-color: var(--m-primary);
+    color: var(--m-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 15px rgba(0, 95, 237, 0.2);
+
+    svg {
+      font-size: 32px;
+    }
+  }
+
+  &__compose {
+    background-color: var(--m-white);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+[m-data-theme='dark'] {
+  .email-list-app-container {
+    &__email-tabs {
+      .tabs {
+        &__tab {
+          background-color: var(--m-subtle-card-background-color);
+
+          &--active {
+            background-color: #005fed14;
+            color: var(--m-primary);
+            border-color: var(--m-primary);
+          }
+        }
+      }
+    }
+
+    &__add {
+      background-color: var(--m-primary);
+    }
+
+    &__compose {
+      background-color: var(--m-white);
+    }
+  }
+}

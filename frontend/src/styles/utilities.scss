@@ -1,0 +1,30 @@
+.u-revert {
+  transform: scale(-1, 1);
+}
+
+.u-relative {
+  position: relative;
+}
+
+.u-absolute {
+  position: absolute;
+}
+
+.u-pointer {
+  cursor: pointer;
+}
+
+.u-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.u-text-red {
+  color: var(--m-danger);
+}
+
+.u-text-center {
+  text-align: center;
+  background-color: tomato;
+}

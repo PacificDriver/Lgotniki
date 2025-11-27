@@ -1,0 +1,10 @@
+.project-list-container {
+  background-color: var(--m-card-background-color);
+  position: relative;
+  padding: 16px;
+  border-radius: var(--m-border-radius);
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+}

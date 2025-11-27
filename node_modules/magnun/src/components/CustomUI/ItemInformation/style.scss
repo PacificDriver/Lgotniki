@@ -1,0 +1,16 @@
+.item-information-container {
+  width: 100%;
+  position: relative;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .box__info {
+      width: 10px;
+      height: 10px;
+      background-color: tomato;
+    }
+  }
+}

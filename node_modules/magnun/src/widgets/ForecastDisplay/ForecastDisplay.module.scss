@@ -1,0 +1,39 @@
+.forecast-display {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &__infos {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+
+    &__value {
+      font-size: 24px;
+      font-weight: 600;
+
+      &--money {
+        color: var(--m-text);
+
+        &::first-letter {
+          color: var(--m-text-muted);
+          font-size: 12px;
+          vertical-align: super;
+          margin-right: 2px;
+        }
+      }
+    }
+
+    &__description {
+      display: flex;
+      flex-wrap: wrap;
+      color: var(--m-text-light);
+    }
+  }
+
+  &__chart {
+    box-shadow: unset;
+  }
+}

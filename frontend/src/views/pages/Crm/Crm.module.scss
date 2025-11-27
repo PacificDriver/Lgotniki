@@ -1,0 +1,17 @@
+.crm-container {
+  width: 100%;
+  position: relative;
+
+  .image {
+    width: 20px;
+    height: 20px;
+  }
+
+  .transaction-icon {
+    display: flex;
+  }
+
+  .transaction-name {
+    display: flex;
+  }
+}
