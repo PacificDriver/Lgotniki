@@ -3,7 +3,6 @@ import { parse } from 'csv-parse/sync';
 import fs from 'fs/promises';
 import { LoadMode, BeneficiaryStatus, OperationType } from '../types';
 import { BeneficiaryModel } from '../models/Beneficiary';
-import pool from '../config/database';
 
 interface UploadResult {
   total: number;

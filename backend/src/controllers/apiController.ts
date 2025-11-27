@@ -9,7 +9,7 @@ import { CardType } from '../types';
  * Public API endpoint for checking beneficiary eligibility
  * This is a placeholder - will be implemented based on actual requirements
  */
-export const checkBenefit = async (req: Request, res: Response) => {
+export const checkBenefit = async (req: Request, res: Response): Promise<void> => {
   try {
     const { cardId, cardType, phone, routeNumber, settlement } = req.body;
 
@@ -128,7 +128,7 @@ export const checkBenefit = async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
+    return res.json({
       eligible: true,
       beneficiary: {
         id: beneficiary.id,
@@ -138,7 +138,7 @@ export const checkBenefit = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error('Check benefit error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message || 'Ошибка при проверке льготы',
     });
   }
@@ -147,7 +147,7 @@ export const checkBenefit = async (req: Request, res: Response) => {
 /**
  * Record benefit usage (when ticket is sold)
  */
-export const recordBenefitUsage = async (req: Request, res: Response) => {
+export const recordBenefitUsage = async (req: Request, res: Response): Promise<void> => {
   try {
     const { beneficiaryId, benefitAssignmentId, routeNumber, settlement, tripsUsed, kilometersUsed, amount, cardId, cardType } = req.body;
 
@@ -194,13 +194,13 @@ export const recordBenefitUsage = async (req: Request, res: Response) => {
       }
     }
 
-    res.json({
+    return res.json({
       success: true,
       usage: result.rows[0],
     });
   } catch (error: any) {
     console.error('Record benefit usage error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message || 'Ошибка при записи использования льготы',
     });
   }

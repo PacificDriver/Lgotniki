@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import multer from 'multer';
-import path from 'path';
 import fs from 'fs/promises';
 import { FileUploadService } from '../services/fileUploadService';
 import { AuthRequest } from '../middleware/auth';
@@ -15,7 +14,10 @@ const upload = multer({
 
 export const uploadFile = upload.single('file');
 
-export const processFile = async (req: AuthRequest, res: Response) => {
+export const processFile = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Файл не загружен' });
@@ -69,7 +71,7 @@ export const processFile = async (req: AuthRequest, res: Response) => {
     // Clean up file
     await fs.unlink(req.file.path).catch(() => {});
 
-    res.json({
+    return res.json({
       uploadId,
       ...result,
     });
@@ -81,7 +83,7 @@ export const processFile = async (req: AuthRequest, res: Response) => {
       await fs.unlink(req.file.path).catch(() => {});
     }
 
-    res.status(500).json({ error: error.message || 'Ошибка при обработке файла' });
+    return res.status(500).json({ error: error.message || 'Ошибка при обработке файла' });
   }
 };
 

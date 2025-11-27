@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { AuthRequest } from '../middleware/auth';
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
 
@@ -21,13 +21,19 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Неверное имя пользователя или пароль' });
     }
 
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      console.error('JWT secret is not configured');
+      return res.status(500).json({ error: 'Конфигурация JWT отсутствует' });
+    }
+
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET || '',
+      secret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
-    res.json({
+    return res.json({
       token,
       user: {
         id: user.id,
@@ -39,11 +45,14 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Ошибка при входе в систему' });
+    return res.status(500).json({ error: 'Ошибка при входе в систему' });
   }
 };
 
-export const getCurrentUser = async (req: AuthRequest, res: Response) => {
+export const getCurrentUser = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Пользователь не аутентифицирован' });
@@ -54,10 +63,10 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Пользователь не найден' });
     }
 
-    res.json(user);
+    return res.json(user);
   } catch (error) {
     console.error('Get current user error:', error);
-    res.status(500).json({ error: 'Ошибка при получении данных пользователя' });
+    return res.status(500).json({ error: 'Ошибка при получении данных пользователя' });
   }
 };
 

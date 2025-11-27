@@ -3,7 +3,10 @@ import { BeneficiaryModel } from '../models/Beneficiary';
 import { AuthRequest } from '../middleware/auth';
 import { BeneficiaryStatus, OperationType } from '../types';
 
-export const createBeneficiary = async (req: AuthRequest, res: Response) => {
+export const createBeneficiary = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const data = {
       fullName: req.body.fullName,
@@ -32,14 +35,19 @@ export const createBeneficiary = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    res.status(201).json(beneficiary);
+    return res.status(201).json(beneficiary);
   } catch (error: any) {
     console.error('Create beneficiary error:', error);
-    res.status(500).json({ error: error.message || 'Ошибка при создании льготника' });
+    return res
+      .status(500)
+      .json({ error: error.message || 'Ошибка при создании льготника' });
   }
 };
 
-export const getBeneficiary = async (req: AuthRequest, res: Response) => {
+export const getBeneficiary = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const beneficiary = await BeneficiaryModel.findById(id);
@@ -48,14 +56,17 @@ export const getBeneficiary = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Льготник не найден' });
     }
 
-    res.json(beneficiary);
+    return res.json(beneficiary);
   } catch (error) {
     console.error('Get beneficiary error:', error);
-    res.status(500).json({ error: 'Ошибка при получении данных льготника' });
+    return res.status(500).json({ error: 'Ошибка при получении данных льготника' });
   }
 };
 
-export const listBeneficiaries = async (req: AuthRequest, res: Response) => {
+export const listBeneficiaries = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { status, benefitTypeId, search, limit, offset } = req.query;
 
@@ -67,14 +78,17 @@ export const listBeneficiaries = async (req: AuthRequest, res: Response) => {
       offset: offset ? parseInt(offset as string) : undefined,
     });
 
-    res.json(result);
+    return res.json(result);
   } catch (error) {
     console.error('List beneficiaries error:', error);
-    res.status(500).json({ error: 'Ошибка при получении списка льготников' });
+    return res.status(500).json({ error: 'Ошибка при получении списка льготников' });
   }
 };
 
-export const updateBeneficiary = async (req: AuthRequest, res: Response) => {
+export const updateBeneficiary = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const beneficiary = await BeneficiaryModel.findById(id);
@@ -113,14 +127,19 @@ export const updateBeneficiary = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    res.json(updated);
+    return res.json(updated);
   } catch (error: any) {
     console.error('Update beneficiary error:', error);
-    res.status(500).json({ error: error.message || 'Ошибка при обновлении льготника' });
+    return res
+      .status(500)
+      .json({ error: error.message || 'Ошибка при обновлении льготника' });
   }
 };
 
-export const deleteBeneficiary = async (req: AuthRequest, res: Response) => {
+export const deleteBeneficiary = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const beneficiary = await BeneficiaryModel.findById(id);
@@ -142,21 +161,24 @@ export const deleteBeneficiary = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    res.json({ message: 'Льготник удален' });
+    return res.json({ message: 'Льготник удален' });
   } catch (error) {
     console.error('Delete beneficiary error:', error);
-    res.status(500).json({ error: 'Ошибка при удалении льготника' });
+    return res.status(500).json({ error: 'Ошибка при удалении льготника' });
   }
 };
 
-export const getBeneficiaryOperations = async (req: AuthRequest, res: Response) => {
+export const getBeneficiaryOperations = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const operations = await BeneficiaryModel.getOperations(id);
-    res.json(operations);
+    return res.json(operations);
   } catch (error) {
     console.error('Get beneficiary operations error:', error);
-    res.status(500).json({ error: 'Ошибка при получении истории операций' });
+    return res.status(500).json({ error: 'Ошибка при получении истории операций' });
   }
 };
 

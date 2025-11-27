@@ -2,7 +2,10 @@ import { Response } from 'express';
 import { BenefitTypeModel } from '../models/BenefitType';
 import { AuthRequest } from '../middleware/auth';
 
-export const createBenefitType = async (req: AuthRequest, res: Response) => {
+export const createBenefitType = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const data = {
       name: req.body.name,
@@ -16,14 +19,19 @@ export const createBenefitType = async (req: AuthRequest, res: Response) => {
     };
 
     const benefitType = await BenefitTypeModel.create(data);
-    res.status(201).json(benefitType);
+    return res.status(201).json(benefitType);
   } catch (error: any) {
     console.error('Create benefit type error:', error);
-    res.status(500).json({ error: error.message || 'Ошибка при создании типа льготы' });
+    return res
+      .status(500)
+      .json({ error: error.message || 'Ошибка при создании типа льготы' });
   }
 };
 
-export const getBenefitType = async (req: AuthRequest, res: Response) => {
+export const getBenefitType = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const benefitType = await BenefitTypeModel.findById(id);
@@ -32,25 +40,31 @@ export const getBenefitType = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Тип льготы не найден' });
     }
 
-    res.json(benefitType);
+    return res.json(benefitType);
   } catch (error) {
     console.error('Get benefit type error:', error);
-    res.status(500).json({ error: 'Ошибка при получении типа льготы' });
+    return res.status(500).json({ error: 'Ошибка при получении типа льготы' });
   }
 };
 
-export const listBenefitTypes = async (req: AuthRequest, res: Response) => {
+export const listBenefitTypes = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const activeOnly = req.query.activeOnly === 'true';
     const benefitTypes = await BenefitTypeModel.findAll(activeOnly);
-    res.json(benefitTypes);
+    return res.json(benefitTypes);
   } catch (error) {
     console.error('List benefit types error:', error);
-    res.status(500).json({ error: 'Ошибка при получении списка типов льгот' });
+    return res.status(500).json({ error: 'Ошибка при получении списка типов льгот' });
   }
 };
 
-export const updateBenefitType = async (req: AuthRequest, res: Response) => {
+export const updateBenefitType = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const benefitType = await BenefitTypeModel.findById(id);
@@ -70,14 +84,19 @@ export const updateBenefitType = async (req: AuthRequest, res: Response) => {
     if (req.body.isActive !== undefined) updateData.isActive = req.body.isActive;
 
     const updated = await BenefitTypeModel.update(id, updateData);
-    res.json(updated);
+    return res.json(updated);
   } catch (error: any) {
     console.error('Update benefit type error:', error);
-    res.status(500).json({ error: error.message || 'Ошибка при обновлении типа льготы' });
+    return res
+      .status(500)
+      .json({ error: error.message || 'Ошибка при обновлении типа льготы' });
   }
 };
 
-export const deleteBenefitType = async (req: AuthRequest, res: Response) => {
+export const deleteBenefitType = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const deleted = await BenefitTypeModel.delete(id);
@@ -86,10 +105,10 @@ export const deleteBenefitType = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Тип льготы не найден' });
     }
 
-    res.json({ message: 'Тип льготы удален' });
+    return res.json({ message: 'Тип льготы удален' });
   } catch (error) {
     console.error('Delete benefit type error:', error);
-    res.status(500).json({ error: 'Ошибка при удалении типа льготы' });
+    return res.status(500).json({ error: 'Ошибка при удалении типа льготы' });
   }
 };
 

@@ -4,7 +4,10 @@ import { BenefitCalculationService } from '../services/benefitCalculationService
 import { AuthRequest } from '../middleware/auth';
 import { TaskStatus } from '../types';
 
-export const createTask = async (req: AuthRequest, res: Response) => {
+export const createTask = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Пользователь не аутентифицирован' });
@@ -20,14 +23,17 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     };
 
     const task = await CalculationTaskModel.create(data);
-    res.status(201).json(task);
+    return res.status(201).json(task);
   } catch (error: any) {
     console.error('Create task error:', error);
-    res.status(500).json({ error: error.message || 'Ошибка при создании задачи' });
+    return res.status(500).json({ error: error.message || 'Ошибка при создании задачи' });
   }
 };
 
-export const getTask = async (req: AuthRequest, res: Response) => {
+export const getTask = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const task = await CalculationTaskModel.findById(id);
@@ -36,14 +42,17 @@ export const getTask = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Задача не найдена' });
     }
 
-    res.json(task);
+    return res.json(task);
   } catch (error) {
     console.error('Get task error:', error);
-    res.status(500).json({ error: 'Ошибка при получении задачи' });
+    return res.status(500).json({ error: 'Ошибка при получении задачи' });
   }
 };
 
-export const listTasks = async (req: AuthRequest, res: Response) => {
+export const listTasks = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { status, benefitTypeId, limit, offset } = req.query;
 
@@ -54,14 +63,17 @@ export const listTasks = async (req: AuthRequest, res: Response) => {
       offset: offset ? parseInt(offset as string) : undefined,
     });
 
-    res.json(result);
+    return res.json(result);
   } catch (error) {
     console.error('List tasks error:', error);
-    res.status(500).json({ error: 'Ошибка при получении списка задач' });
+    return res.status(500).json({ error: 'Ошибка при получении списка задач' });
   }
 };
 
-export const executeTask = async (req: AuthRequest, res: Response) => {
+export const executeTask = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     
@@ -70,10 +82,10 @@ export const executeTask = async (req: AuthRequest, res: Response) => {
       console.error('Task execution error:', error);
     });
 
-    res.json({ message: 'Задача запущена' });
+    return res.json({ message: 'Задача запущена' });
   } catch (error: any) {
     console.error('Execute task error:', error);
-    res.status(500).json({ error: error.message || 'Ошибка при выполнении задачи' });
+    return res.status(500).json({ error: error.message || 'Ошибка при выполнении задачи' });
   }
 };
 

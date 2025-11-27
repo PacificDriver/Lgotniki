@@ -12,7 +12,11 @@ export interface AuthRequest extends Request {
   };
 }
 
-export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
@@ -20,7 +24,13 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
       return res.status(401).json({ error: 'Токен не предоставлен' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { userId: string };
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      console.error('JWT secret is not configured');
+      return res.status(500).json({ error: 'Конфигурация JWT отсутствует' });
+    }
+
+    const decoded = jwt.verify(token, secret) as { userId: string };
     const user = await UserModel.findById(decoded.userId);
 
     if (!user || !user.isActive) {
@@ -28,14 +38,14 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     req.user = user;
-    next();
+    return next();
   } catch (error) {
     return res.status(401).json({ error: 'Недействительный токен' });
   }
 };
 
 export const requireRole = (...roles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       return res.status(401).json({ error: 'Требуется аутентификация' });
     }

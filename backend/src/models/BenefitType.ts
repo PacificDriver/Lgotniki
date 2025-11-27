@@ -1,5 +1,5 @@
 import pool from '../config/database';
-import { BenefitType, BenefitCalculationType } from '../types';
+import { BenefitType } from '../types';
 
 export class BenefitTypeModel {
   static async create(data: Omit<BenefitType, 'id' | 'createdAt' | 'updatedAt'>): Promise<BenefitType> {
