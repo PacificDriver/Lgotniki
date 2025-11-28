@@ -69,14 +69,20 @@ export default function BulkAddModal({ isOpen, onClose, onSuccess }) {
   const loadBenefitTypes = async () => {
     try {
       const types = await benefitTypesAPI.list(false)
-      setBenefitTypes(
-        types.map(t => ({
-          value: t.id,
-          label: t.name,
-        }))
-      )
+      if (Array.isArray(types)) {
+        setBenefitTypes(
+          types.map(t => ({
+            value: t.id,
+            label: t.name,
+          }))
+        )
+      } else {
+        console.error('Invalid benefit types format:', types)
+        setBenefitTypes([])
+      }
     } catch (error) {
       console.error('Error loading benefit types:', error)
+      setBenefitTypes([])
     }
   }
 
@@ -203,7 +209,10 @@ export default function BulkAddModal({ isOpen, onClose, onSuccess }) {
             hashPan: entry.hashPan?.trim() || undefined,
             nfcId: entry.nfcId?.trim() || undefined,
             rfid: entry.rfid?.trim() || undefined,
-            benefitTypeId: entry.benefitTypeId || undefined,
+            benefitTypeId:
+              entry.benefitTypeId && entry.benefitTypeId !== ''
+                ? entry.benefitTypeId
+                : null,
             status: entry.status,
             residence: entry.residence?.trim() || undefined,
           }
@@ -241,10 +250,8 @@ export default function BulkAddModal({ isOpen, onClose, onSuccess }) {
           onSuccess()
         }
 
-        // Close modal after short delay
-        setTimeout(() => {
-          onClose()
-        }, 1500)
+        // Close modal immediately after success
+        onClose()
       }
 
       if (results.errors.length > 0 && results.success.length === 0) {
@@ -491,17 +498,19 @@ export default function BulkAddModal({ isOpen, onClose, onSuccess }) {
                         Тип льготы
                       </label>
                       <Select
-                        value={entry.benefitTypeId}
+                        value={entry.benefitTypeId || ''}
                         onChange={e =>
-                          updateEntry(entry.id, 'benefitTypeId', e.target.value)
+                          updateEntry(
+                            entry.id,
+                            'benefitTypeId',
+                            e.target.value || null
+                          )
                         }
                         options={[
                           { value: '', label: 'Не выбрано' },
                           ...benefitTypes,
                         ]}
-                        selected={
-                          entry.benefitTypeId ? [entry.benefitTypeId] : []
-                        }
+                        unique
                       />
                     </div>
 

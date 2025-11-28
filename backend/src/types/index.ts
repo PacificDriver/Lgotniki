@@ -60,7 +60,8 @@ export interface Beneficiary {
   hashPan?: string;
   nfcId?: string;
   rfid?: string;
-  benefitTypeId?: string;
+  benefitTypeId?: string | null;
+  benefitTypeName?: string | null;
   status: BeneficiaryStatus;
   residence?: string;
   lastLoadedAt?: Date;

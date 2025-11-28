@@ -15,6 +15,7 @@ import { FiEdit3, FiTrash2 } from 'react-icons/fi'
 
 import { operatorsAPI } from '../../../services/api'
 import { useModalConfirm as confirmModal } from '../../../hooks/useModalConfirm'
+import useDebounce from '../../../hooks/useDebounce'
 import Select from '../../../components/BaseUI/Select'
 
 const statusOptions = [
@@ -33,6 +34,8 @@ const initialForm = {
 export default function OperatorsManager() {
   const [operators, setOperators] = useState([])
   const [loading, setLoading] = useState(false)
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
   const [modalOpen, setModalOpen] = useState(false)
   const [currentOperator, setCurrentOperator] = useState(null)
   const [form, setForm] = useState(initialForm)
@@ -53,7 +56,9 @@ export default function OperatorsManager() {
   const loadOperators = async () => {
     setLoading(true)
     try {
-      const data = await operatorsAPI.list()
+      const params = {}
+      if (debouncedSearch) params.search = debouncedSearch
+      const data = await operatorsAPI.list(params)
       setOperators(data)
     } catch (error) {
       console.error('Не удалось загрузить операторов', error)
@@ -72,7 +77,7 @@ export default function OperatorsManager() {
 
   useEffect(() => {
     loadOperators()
-  }, [])
+  }, [debouncedSearch])
 
   const openCreateModal = () => {
     setCurrentOperator(null)
@@ -202,6 +207,15 @@ export default function OperatorsManager() {
         </Button>
       </div>
 
+      <div className="d-flex gap-2 mb-3">
+        <Input
+          placeholder="Поиск по ФИО, логину, email..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ flex: 1 }}
+        />
+      </div>
+
       <Table
         title="Список операторов"
         columns={columns}
@@ -209,39 +223,50 @@ export default function OperatorsManager() {
         loading={loading}
         checkboxSelection={false}
         disableColumnMenu
+        disableSearchFilter
       >
-        {operators.map(operator => (
-          <Tr key={operator.id} id={operator.id}>
-            <Td>{operator.fullName}</Td>
-            <Td>{operator.username}</Td>
-            <Td>{operator.email}</Td>
-            <Td>
-              <Lozenge
-                appearance={
-                  operator.isActive ? 'success-subtle' : 'danger-subtle'
-                }
-              >
-                {operator.isActive ? 'Активен' : 'Заблокирован'}
-              </Lozenge>
-            </Td>
-            <Td>
-              <div className="d-flex gap-1">
-                <IconButton
-                  icon={<FiEdit3 style={{ fontSize: '18px' }} />}
-                  appearance="subtle"
-                  shape="circle"
-                  onClick={() => openEditModal(operator)}
-                />
-                <IconButton
-                  icon={<FiTrash2 style={{ fontSize: '18px' }} />}
-                  appearance="subtle"
-                  shape="circle"
-                  onClick={() => handleDelete(operator)}
-                />
-              </div>
-            </Td>
-          </Tr>
-        ))}
+        {operators.map(operator => {
+          // Normalize all values to prevent null/undefined errors in table search
+          const normalizeValue = value => {
+            if (value === null || value === undefined) return ''
+            return String(value)
+          }
+
+          return (
+            <Tr key={operator.id} id={operator.id}>
+              <Td>{normalizeValue(operator.fullName)}</Td>
+              <Td>{normalizeValue(operator.username)}</Td>
+              <Td>{normalizeValue(operator.email)}</Td>
+              <Td>
+                <Lozenge
+                  appearance={
+                    operator.isActive ? 'success-subtle' : 'danger-subtle'
+                  }
+                >
+                  {normalizeValue(
+                    operator.isActive ? 'Активен' : 'Заблокирован'
+                  )}
+                </Lozenge>
+              </Td>
+              <Td>
+                <div className="d-flex gap-1">
+                  <IconButton
+                    icon={<FiEdit3 style={{ fontSize: '18px' }} />}
+                    appearance="subtle"
+                    shape="circle"
+                    onClick={() => openEditModal(operator)}
+                  />
+                  <IconButton
+                    icon={<FiTrash2 style={{ fontSize: '18px' }} />}
+                    appearance="subtle"
+                    shape="circle"
+                    onClick={() => handleDelete(operator)}
+                  />
+                </div>
+              </Td>
+            </Tr>
+          )
+        })}
       </Table>
 
       <Modal isOpen={modalOpen} width="medium" onClose={closeModal}>

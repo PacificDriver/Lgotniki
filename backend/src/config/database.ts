@@ -1,7 +1,11 @@
-import { Pool } from 'pg';
+import { Pool, types } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+// Configure pg to return DATE as string (YYYY-MM-DD) instead of Date object
+// This prevents timezone issues when dates are serialized to JSON
+types.setTypeParser(1082, (value: string) => value); // DATE type (OID 1082)
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

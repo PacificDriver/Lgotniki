@@ -45,14 +45,20 @@ export default function Login() {
   }, [])
 
   const sigin = () => {
+    console.debug('[login] click', { user })
     const url = localStorage.getItem('redirectTo')
     const parsedUrl = url ? JSON.parse(url) : null
 
     login(user.email, user.password).then(response => {
+      console.debug('[login] response', response)
       if (response) {
         navigate(parsedUrl ? parsedUrl : '/', { replace: true })
         localStorage.removeItem('redirectTo')
       } else {
+        console.warn('[login] failed', {
+          username: user.email,
+          target: parsedUrl,
+        })
         setToast({
           id: 1,
           key: 1,

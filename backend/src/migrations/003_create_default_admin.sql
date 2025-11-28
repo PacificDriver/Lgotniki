@@ -1,11 +1,11 @@
 -- Create default admin user (password: admin123)
--- Password hash for 'admin123' using bcrypt with salt rounds 10
--- Generated hash: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68cmJt7i6JqO6
+-- Password hash provided by infrastructure team
+-- Generated hash: $2a$10$jCiS0St0o5ov0oPsHE/MK.YM8Ay2oPtwEkDa9oJgojPOUfYC0jgQq
 INSERT INTO users (username, email, password_hash, full_name, role, is_active)
 VALUES (
   'admin',
   'admin@lgotniki.local',
-  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68cmJt7i6JqO6',
+  '$2a$10$jCiS0St0o5ov0oPsHE/MK.YM8Ay2oPtwEkDa9oJgojPOUfYC0jgQq',
   'Администратор системы',
   'admin',
   true

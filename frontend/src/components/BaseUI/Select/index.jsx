@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import useOutsideClick from '../../../hooks/useOutsideClick'
@@ -158,6 +158,18 @@ const OptionItem = ({ option, unique, onClick }) => (
   </li>
 )
 
+const normalizeSelection = input => {
+  if (Array.isArray(input)) {
+    return input.filter(value => value !== undefined && value !== null)
+  }
+
+  if (input === undefined || input === null) {
+    return []
+  }
+
+  return [input]
+}
+
 const Select = ({
   label,
   options,
@@ -169,6 +181,8 @@ const Select = ({
   required,
   listLabel,
   disabled = false,
+  value,
+  onChange,
 }) => {
   const [selectionOptions, setSelectionOptions] = useState([])
   const [currentSelection, setCurrentSelection] = useState([])
@@ -183,20 +197,34 @@ const Select = ({
 
   const toogleDropdownId = `toggle-dropdown-${uuidv4()}`
 
+  const computedSelectedValues = useMemo(() => {
+    if (selected !== undefined && selected !== null) {
+      return normalizeSelection(selected)
+    }
+
+    if (value !== undefined && value !== null) {
+      return normalizeSelection(value)
+    }
+
+    return []
+  }, [selected, value])
+
   useEffect(() => {
-    const values = selected
-      ? options?.map(option => ({
-          ...option,
-          ...(selected?.includes(option.value) && { checked: true }),
-        }))
-      : options
+    const sourceOptions = options || []
+    const values = sourceOptions.map(option => {
+      const isChecked = computedSelectedValues?.includes(option.value)
+      return {
+        ...option,
+        ...(isChecked ? { checked: true } : { checked: false }),
+      }
+    })
 
     setCurrentSelection(
-      values?.filter(option => selected?.includes(option.value))
+      values.filter(option => computedSelectedValues?.includes(option.value))
     )
     setSelectionOptions(values)
     setState({ valid: convertToBoolean(valid) })
-  }, [options, selected, valid])
+  }, [options, computedSelectedValues, valid])
 
   useEffect(() => {
     const checkWrap = () => {
@@ -257,10 +285,34 @@ const Select = ({
     setSelectionOptions([...values])
   }
 
+  const emitSelection = selection => {
+    onSelected?.(selection)
+
+    if (onChange) {
+      let nextValue
+
+      if (value !== undefined) {
+        nextValue = Array.isArray(value)
+          ? selection.map(item => item.value)
+          : selection[0]?.value ?? ''
+      } else if (selected !== undefined) {
+        nextValue = unique
+          ? selection[0]?.value ?? ''
+          : selection.map(item => item.value)
+      } else {
+        nextValue = unique
+          ? selection[0]?.value ?? ''
+          : selection.map(item => item.value)
+      }
+
+      onChange({ target: { value: nextValue } })
+    }
+  }
+
   const optionSelected = option => {
     if (unique) {
       setCurrentSelection([option])
-      onSelected?.([option])
+      emitSelection([option])
       setOnSelect(false)
       return
     }
@@ -280,18 +332,16 @@ const Select = ({
     setSelectionOptions([...items])
 
     if (optionAlreadyExists !== -1) {
-      const values = currentSelection.filter(
-        (_, i) => i !== optionAlreadyExists
-      )
+      const values = currentSelection.filter((_, i) => i !== optionAlreadyExists)
       setCurrentSelection(values)
-      onSelected?.(values)
+      emitSelection(values)
       return
     }
 
     const values = [...currentSelection, { ...option, checked: true }]
 
     setCurrentSelection([...values])
-    onSelected?.([...values])
+    emitSelection([...values])
   }
 
   const remove = (event, select) => {
@@ -308,7 +358,7 @@ const Select = ({
     options[optionIndex].checked = !options[optionIndex]?.checked
 
     setCurrentSelection([...values])
-    onSelected?.([...values])
+    emitSelection([...values])
   }
 
   return (

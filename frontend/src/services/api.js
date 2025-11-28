@@ -1,6 +1,22 @@
 import axios from 'axios'
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api'
+const resolveApiBaseUrl = () => {
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3001/api'
+  }
+
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}/api`
+  }
+
+  return 'http://localhost:3001/api'
+}
+
+const API_URL = resolveApiBaseUrl()
 
 const api = axios.create({
   baseURL: API_URL,
@@ -82,9 +98,10 @@ export const beneficiariesAPI = {
 
 // Benefit Types API
 export const benefitTypesAPI = {
-  list: async (activeOnly = false) => {
+  list: async (activeOnly = false, params = {}) => {
+    const queryParams = { activeOnly, ...params }
     const response = await api.get('/benefit-types', {
-      params: { activeOnly },
+      params: queryParams,
     })
     return response.data
   },
@@ -153,8 +170,8 @@ export const userAPI = {
 }
 
 export const operatorsAPI = {
-  list: async () => {
-    const response = await api.get('/users/operators')
+  list: async (params = {}) => {
+    const response = await api.get('/users/operators', { params })
     return response.data
   },
   create: async data => {

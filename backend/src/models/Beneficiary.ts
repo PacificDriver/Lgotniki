@@ -30,28 +30,45 @@ export class BeneficiaryModel {
   }
 
   static async findById(id: string): Promise<Beneficiary | null> {
-    const result = await pool.query('SELECT * FROM beneficiaries WHERE id = $1', [id]);
+    const result = await pool.query(
+      `SELECT b.*, bt.name AS benefit_type_name, bt.description AS benefit_type_label
+       FROM beneficiaries b
+       LEFT JOIN benefit_types bt ON bt.id = b.benefit_type_id
+       WHERE b.id = $1`,
+      [id]
+    );
     if (result.rows.length === 0) return null;
     return this.mapRowToBeneficiary(result.rows[0]);
   }
 
   static async findByPhone(phone: string): Promise<Beneficiary | null> {
-    const result = await pool.query('SELECT * FROM beneficiaries WHERE phone = $1', [phone]);
+    const result = await pool.query(
+      `SELECT b.*, bt.name AS benefit_type_name, bt.description AS benefit_type_label
+       FROM beneficiaries b
+       LEFT JOIN benefit_types bt ON bt.id = b.benefit_type_id
+       WHERE b.phone = $1`,
+      [phone]
+    );
     if (result.rows.length === 0) return null;
     return this.mapRowToBeneficiary(result.rows[0]);
   }
 
   static async findByCard(cardType: string, cardIdentifier: string): Promise<Beneficiary | null> {
     let query = '';
+    const baseSelect = `
+      SELECT b.*, bt.name AS benefit_type_name, bt.description AS benefit_type_label
+      FROM beneficiaries b
+      LEFT JOIN benefit_types bt ON bt.id = b.benefit_type_id
+    `;
     switch (cardType) {
       case 'rfid':
-        query = 'SELECT * FROM beneficiaries WHERE rfid = $1';
+        query = `${baseSelect} WHERE b.rfid = $1`;
         break;
       case 'nfc':
-        query = 'SELECT * FROM beneficiaries WHERE nfc_id = $1';
+        query = `${baseSelect} WHERE b.nfc_id = $1`;
         break;
       case 'hash_pan':
-        query = 'SELECT * FROM beneficiaries WHERE hash_pan = $1';
+        query = `${baseSelect} WHERE b.hash_pan = $1`;
         break;
       default:
         return null;
@@ -68,7 +85,12 @@ export class BeneficiaryModel {
     limit?: number;
     offset?: number;
   }): Promise<{ beneficiaries: Beneficiary[]; total: number }> {
-    let query = 'SELECT * FROM beneficiaries WHERE 1=1';
+    let query = `
+      SELECT b.*, bt.name AS benefit_type_name, bt.description AS benefit_type_label
+      FROM beneficiaries b
+      LEFT JOIN benefit_types bt ON bt.id = b.benefit_type_id
+      WHERE 1=1
+    `;
     const params: any[] = [];
     let paramCount = 0;
 
@@ -96,7 +118,10 @@ export class BeneficiaryModel {
     }
 
     // Get total count
-    const countQuery = query.replace('SELECT *', 'SELECT COUNT(*)');
+    const countQuery = query.replace(
+      'SELECT b.*, bt.name AS benefit_type_name, bt.description AS benefit_type_label',
+      'SELECT COUNT(*)'
+    );
     const countResult = await pool.query(countQuery, params);
     const total = parseInt(countResult.rows[0].count);
 
@@ -133,7 +158,12 @@ export class BeneficiaryModel {
         paramCount++;
         const dbKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
         fields.push(`${dbKey} = $${paramCount}`);
-        values.push(value);
+        // Handle null values explicitly for benefit_type_id
+        if (key === 'benefitTypeId' && value === null) {
+          values.push(null);
+        } else {
+          values.push(value);
+        }
       }
     });
 
@@ -150,7 +180,8 @@ export class BeneficiaryModel {
     );
 
     if (result.rows.length === 0) return null;
-    return this.mapRowToBeneficiary(result.rows[0]);
+    // Return updated beneficiary with benefit type name by fetching it again
+    return this.findById(id);
   }
 
   static async delete(id: string): Promise<boolean> {
@@ -184,10 +215,24 @@ export class BeneficiaryModel {
   }
 
   private static mapRowToBeneficiary(row: any): Beneficiary {
+    // birth_date should now be a string in YYYY-MM-DD format from pg type parser
+    // But we'll ensure it's always a string to avoid any timezone issues
+    let birthDate: any = row.birth_date;
+    if (birthDate instanceof Date) {
+      // Fallback: if somehow it's still a Date, format it as YYYY-MM-DD in UTC
+      const year = birthDate.getUTCFullYear();
+      const month = String(birthDate.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(birthDate.getUTCDate()).padStart(2, '0');
+      birthDate = `${year}-${month}-${day}`;
+    } else if (typeof birthDate === 'string' && birthDate.includes('T')) {
+      // If it's an ISO string, extract just the date part
+      birthDate = birthDate.split('T')[0];
+    }
+
     return {
       id: row.id,
       fullName: row.full_name,
-      birthDate: row.birth_date,
+      birthDate: birthDate as any, // Will be serialized as string in JSON
       phone: row.phone,
       email: row.email,
       snils: row.snils,
@@ -195,6 +240,7 @@ export class BeneficiaryModel {
       nfcId: row.nfc_id,
       rfid: row.rfid,
       benefitTypeId: row.benefit_type_id,
+      benefitTypeName: row.benefit_type_name || row.benefit_type_label,
       status: row.status,
       residence: row.residence,
       lastLoadedAt: row.last_loaded_at,

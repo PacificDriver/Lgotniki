@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { calculationTasksAPI, benefitTypesAPI } from '../../../services/api'
 import { useAuth } from '../../../services/useAuth'
 import { translate } from '../../../hooks/translate'
+import useDebounce from '../../../hooks/useDebounce'
 import Button from '../../../components/BaseUI/Button'
 import IconButton from '../../../components/BaseUI/Button/IconButton'
 import { Table, Td, Tr } from '../../../components/BaseUI/Table'
@@ -26,6 +27,8 @@ export default function CalculationTasks() {
   const [tasks, setTasks] = useState([])
   const [benefitTypes, setBenefitTypes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
   const [sidebarOpened, setSidebarOpened] = useState(false)
   const [taskDetail, setTaskDetail] = useState(null)
 
@@ -45,13 +48,15 @@ export default function CalculationTasks() {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [debouncedSearch])
 
   const loadData = async () => {
     try {
       setLoading(true)
+      const params = {}
+      if (debouncedSearch) params.search = debouncedSearch
       const [tasksData, benefitTypesData] = await Promise.all([
-        calculationTasksAPI.list(),
+        calculationTasksAPI.list(params),
         benefitTypesAPI.list(true),
       ])
       setTasks(tasksData.tasks || [])
@@ -115,6 +120,15 @@ export default function CalculationTasks() {
     >
       <Container>
         <ContainerItem sm={4} md={8} xl={12}>
+          <div className="d-flex gap-2 mb-3">
+            <Input
+              placeholder="Поиск по названию задачи..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ flex: 1 }}
+            />
+          </div>
+
           <Table
             title="Список задач"
             columns={headers}
@@ -122,23 +136,32 @@ export default function CalculationTasks() {
             loading={loading}
             checkboxSelection
             disableColumnMenu
+            disableSearchFilter
           >
             {tasks.map(task => {
+              // Normalize all values to prevent null/undefined errors in table search
+              const normalizeValue = value => {
+                if (value === null || value === undefined) return ''
+                return String(value)
+              }
+
               const benefitType = benefitTypes.find(
                 bt => bt.id === task.benefitTypeId
               )
               return (
                 <Tr key={task.id} id={task.id}>
-                  <Td>{task.name}</Td>
-                  <Td>{benefitType?.name || '-'}</Td>
+                  <Td>{normalizeValue(task.name)}</Td>
+                  <Td>{normalizeValue(benefitType?.name) || '-'}</Td>
                   <Td>
                     <Lozenge appearance={getStatusAppearance(task.status)}>
-                      {getStatusLabel(task.status)}
+                      {normalizeValue(getStatusLabel(task.status))}
                     </Lozenge>
                   </Td>
                   <Td>{getProgress(task)}</Td>
                   <Td>
-                    {new Date(task.createdAt).toLocaleDateString('ru-RU')}
+                    {task.createdAt
+                      ? new Date(task.createdAt).toLocaleDateString('ru-RU')
+                      : '-'}
                   </Td>
                   <Td>
                     <div className="d-flex align-items-center">

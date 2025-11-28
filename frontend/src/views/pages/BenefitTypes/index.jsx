@@ -3,6 +3,7 @@ import { benefitTypesAPI } from '../../../services/api'
 import { useAuth } from '../../../services/useAuth'
 import { translate } from '../../../hooks/translate'
 import { useModalConfirm as confirm } from '../../../hooks/useModalConfirm'
+import useDebounce from '../../../hooks/useDebounce'
 import Button from '../../../components/BaseUI/Button'
 import IconButton from '../../../components/BaseUI/Button/IconButton'
 import Input from '../../../components/BaseUI/Input'
@@ -20,14 +21,19 @@ export default function BenefitTypes() {
   const { isAdmin, isOperator } = useAuth()
   const [benefitTypes, setBenefitTypes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
   const [sidebarOpened, setSidebarOpened] = useState(false)
   const [benefitTypeDetail, setBenefitTypeDetail] = useState(null)
   const [toasts, setToasts] = useState([])
 
   const headers = [
     { name: 'Название', dataType: 'text' },
+    { name: 'Описание', dataType: 'text' },
     { name: 'Тип расчета', dataType: 'text' },
+    { name: 'Параметры расчета', dataType: 'text' },
     { name: 'Маршруты', dataType: 'text' },
+    { name: 'Населенные пункты', dataType: 'text' },
     { name: 'Статус', dataType: 'text' },
     { name: 'Действия' },
   ]
@@ -36,12 +42,14 @@ export default function BenefitTypes() {
 
   useEffect(() => {
     loadBenefitTypes()
-  }, [])
+  }, [debouncedSearch])
 
   const loadBenefitTypes = async () => {
     try {
       setLoading(true)
-      const data = await benefitTypesAPI.list()
+      const params = {}
+      if (debouncedSearch) params.search = debouncedSearch
+      const data = await benefitTypesAPI.list(false, params)
       setBenefitTypes(data)
     } catch (error) {
       console.error('Error loading benefit types:', error)
@@ -130,6 +138,15 @@ export default function BenefitTypes() {
       >
         <Container>
           <ContainerItem sm={4} md={8} xl={12}>
+            <div className="d-flex gap-2 mb-3">
+              <Input
+                placeholder="Поиск по названию, описанию..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{ flex: 1 }}
+              />
+            </div>
+
             <Table
               title="Список типов льгот"
               columns={headers}
@@ -137,54 +154,85 @@ export default function BenefitTypes() {
               loading={loading}
               checkboxSelection
               disableColumnMenu
+              disableSearchFilter
             >
-              {benefitTypes.map(benefitType => (
-                <Tr key={benefitType.id} id={benefitType.id}>
-                  <Td>{benefitType.name}</Td>
-                  <Td>
-                    {getCalculationTypeLabel(benefitType.calculationType)}
-                  </Td>
-                  <Td>
-                    {benefitType.routes && benefitType.routes.length > 0
-                      ? benefitType.routes.join(', ')
-                      : 'Все маршруты'}
-                  </Td>
-                  <Td>
-                    <Lozenge
-                      appearance={
-                        benefitType.isActive
-                          ? 'success-subtle'
-                          : 'neutral-subtle'
-                      }
-                    >
-                      {benefitType.isActive ? 'Активен' : 'Неактивен'}
-                    </Lozenge>
-                  </Td>
-                  <Td>
-                    <div className="d-flex align-items-center">
-                      {(isAdmin() || isOperator()) && (
-                        <IconButton
-                          icon={<FiEdit3 style={{ fontSize: '18px' }} />}
-                          appearance="subtle"
-                          shape="circle"
-                          onClick={() => {
-                            setSidebarOpened(true)
-                            setBenefitTypeDetail(benefitType)
-                          }}
-                        />
+              {benefitTypes.map(benefitType => {
+                // Normalize all values to prevent null/undefined errors in table search
+                const normalizeValue = value => {
+                  if (value === null || value === undefined) return ''
+                  return String(value)
+                }
+
+                const getCalculationParamsText = () => {
+                  if (!benefitType.calculationParams) return '-'
+                  const params = benefitType.calculationParams
+                  if (params.trips) return `${params.trips} поездок`
+                  if (params.kilometers) return `${params.kilometers} км`
+                  if (params.discountPercent)
+                    return `${params.discountPercent}%`
+                  return '-'
+                }
+
+                return (
+                  <Tr key={benefitType.id} id={benefitType.id}>
+                    <Td>{normalizeValue(benefitType.name)}</Td>
+                    <Td>{normalizeValue(benefitType.description) || '-'}</Td>
+                    <Td>
+                      {normalizeValue(
+                        getCalculationTypeLabel(benefitType.calculationType)
                       )}
-                      {isAdmin() && (
-                        <IconButton
-                          icon={<FiTrash2 style={{ fontSize: '18px' }} />}
-                          appearance="subtle"
-                          shape="circle"
-                          onClick={() => handleDelete(benefitType.id)}
-                        />
-                      )}
-                    </div>
-                  </Td>
-                </Tr>
-              ))}
+                    </Td>
+                    <Td>{getCalculationParamsText()}</Td>
+                    <Td>
+                      {benefitType.routes && benefitType.routes.length > 0
+                        ? benefitType.routes.join(', ')
+                        : 'Все маршруты'}
+                    </Td>
+                    <Td>
+                      {benefitType.settlements &&
+                      benefitType.settlements.length > 0
+                        ? benefitType.settlements.join(', ')
+                        : 'Все пункты'}
+                    </Td>
+                    <Td>
+                      <Lozenge
+                        appearance={
+                          benefitType.isActive
+                            ? 'success-subtle'
+                            : 'neutral-subtle'
+                        }
+                      >
+                        {normalizeValue(
+                          benefitType.isActive ? 'Активен' : 'Неактивен'
+                        )}
+                      </Lozenge>
+                    </Td>
+                    <Td>
+                      <div className="d-flex align-items-center">
+                        {(isAdmin() || isOperator()) && (
+                          <IconButton
+                            icon={<FiEdit3 style={{ fontSize: '18px' }} />}
+                            appearance="subtle"
+                            shape="circle"
+                            onClick={() => {
+                              setSidebarOpened(true)
+                              setBenefitTypeDetail(benefitType)
+                            }}
+                          />
+                        )}
+                        {isAdmin() && (
+                          <IconButton
+                            icon={<FiTrash2 style={{ fontSize: '18px' }} />}
+                            appearance="subtle"
+                            shape="circle"
+                            onClick={() => handleDelete(benefitType.id)}
+                          />
+                        )}
+                      </div>
+                    </Td>
+                  </Tr>
+                )
+              })}
             </Table>
           </ContainerItem>
         </Container>
@@ -205,13 +253,46 @@ export default function BenefitTypes() {
             try {
               if (benefitTypeDetail?.id) {
                 await benefitTypesAPI.update(benefitTypeDetail.id, data)
+                setToasts(prev => [
+                  {
+                    id: `update-success-${Date.now()}`,
+                    key: `update-success-${Date.now()}`,
+                    title: 'Успешно',
+                    appearance: 'success',
+                    description: 'Тип льготы успешно обновлен.',
+                  },
+                  ...prev,
+                ])
               } else {
                 await benefitTypesAPI.create(data)
+                setToasts(prev => [
+                  {
+                    id: `create-success-${Date.now()}`,
+                    key: `create-success-${Date.now()}`,
+                    title: 'Успешно',
+                    appearance: 'success',
+                    description: 'Тип льготы успешно создан.',
+                  },
+                  ...prev,
+                ])
               }
               setSidebarOpened(false)
+              setBenefitTypeDetail(null)
               loadBenefitTypes()
             } catch (error) {
               console.error('Error saving benefit type:', error)
+              setToasts(prev => [
+                {
+                  id: `save-error-${Date.now()}`,
+                  key: `save-error-${Date.now()}`,
+                  title: 'Ошибка',
+                  appearance: 'danger',
+                  description:
+                    error.response?.data?.error ||
+                    'Ошибка при сохранении типа льготы.',
+                },
+                ...prev,
+              ])
             }
           }}
         />
@@ -243,6 +324,20 @@ function BenefitTypeForm({ benefitType, onSave }) {
     isActive: benefitType?.isActive !== undefined ? benefitType.isActive : true,
   })
 
+  // Update form data when benefitType changes
+  useEffect(() => {
+    setFormData({
+      name: benefitType?.name || '',
+      description: benefitType?.description || '',
+      calculationType: benefitType?.calculationType || 'discount_percent',
+      calculationParams: benefitType?.calculationParams || {},
+      routes: benefitType?.routes || [],
+      settlements: benefitType?.settlements || [],
+      isActive:
+        benefitType?.isActive !== undefined ? benefitType.isActive : true,
+    })
+  }, [benefitType])
+
   const calculationTypeOptions = [
     { value: 'fixed_trips', label: 'Фиксированное количество поездок' },
     { value: 'kilometer_limit', label: 'Лимит километров' },
@@ -252,7 +347,26 @@ function BenefitTypeForm({ benefitType, onSave }) {
 
   const handleSubmit = e => {
     e.preventDefault()
-    onSave(formData)
+    // Prepare data for saving - ensure calculationParams is properly formatted
+    const dataToSave = {
+      ...formData,
+      calculationParams: formData.calculationParams || {},
+    }
+
+    // Clean up calculationParams - remove undefined/null values
+    if (dataToSave.calculationParams) {
+      Object.keys(dataToSave.calculationParams).forEach(key => {
+        if (
+          dataToSave.calculationParams[key] === undefined ||
+          dataToSave.calculationParams[key] === null ||
+          dataToSave.calculationParams[key] === ''
+        ) {
+          delete dataToSave.calculationParams[key]
+        }
+      })
+    }
+
+    onSave(dataToSave)
   }
 
   return (
@@ -293,15 +407,16 @@ function BenefitTypeForm({ benefitType, onSave }) {
             label="Количество поездок"
             type="number"
             value={formData.calculationParams?.trips || ''}
-            onChange={e =>
+            onChange={e => {
+              const value = e.target.value
               setFormData({
                 ...formData,
                 calculationParams: {
                   ...formData.calculationParams,
-                  trips: parseInt(e.target.value),
+                  trips: value ? parseInt(value) || 0 : undefined,
                 },
               })
-            }
+            }}
           />
         </div>
       )}
@@ -311,15 +426,16 @@ function BenefitTypeForm({ benefitType, onSave }) {
             label="Лимит километров"
             type="number"
             value={formData.calculationParams?.kilometers || ''}
-            onChange={e =>
+            onChange={e => {
+              const value = e.target.value
               setFormData({
                 ...formData,
                 calculationParams: {
                   ...formData.calculationParams,
-                  kilometers: parseFloat(e.target.value),
+                  kilometers: value ? parseFloat(value) || 0 : undefined,
                 },
               })
-            }
+            }}
           />
         </div>
       )}
@@ -331,15 +447,16 @@ function BenefitTypeForm({ benefitType, onSave }) {
             min="0"
             max="100"
             value={formData.calculationParams?.discountPercent || ''}
-            onChange={e =>
+            onChange={e => {
+              const value = e.target.value
               setFormData({
                 ...formData,
                 calculationParams: {
                   ...formData.calculationParams,
-                  discountPercent: parseInt(e.target.value),
+                  discountPercent: value ? parseInt(value) || 0 : undefined,
                 },
               })
-            }
+            }}
           />
         </div>
       )}

@@ -4,32 +4,29 @@ import { MdClose } from 'react-icons/md'
 
 import styles from './Modal.module.scss'
 
-const ModalDialogContent = ({
-  children,
-  width,
-  onClose,
-  scrollBehavior,
-  className = '',
-}) => {
-  const modalContentRef = useRef(null)
+const ModalDialogContent = React.forwardRef(
+  ({ children, width, onClose, scrollBehavior, className = '' }, ref) => {
+    const childrenWithProps = React.Children.map(children, child => {
+      if (child.type && child.type.name === 'ModalHeader') {
+        return React.cloneElement(child, { onClose })
+      }
 
-  const childrenWithProps = React.Children.map(children, child => {
-    if (child.type && child.type.name === 'ModalHeader') {
-      return React.cloneElement(child, { onClose })
-    }
+      return child
+    })
 
-    return child
-  })
+    return (
+      <div
+        ref={ref}
+        className={`${className && className} ${styles['modal-content']} ${styles[`modal-content--${width || 'medium'}`]} ${styles[`modal-content--scroll-${scrollBehavior || ''}`]}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {childrenWithProps}
+      </div>
+    )
+  }
+)
 
-  return (
-    <div
-      ref={modalContentRef}
-      className={`${className && className} ${styles['modal-content']} ${styles[`modal-content--${width || 'medium'}`]} ${styles[`modal-content--scroll-${scrollBehavior || ''}`]}`}
-    >
-      {childrenWithProps}
-    </div>
-  )
-}
+ModalDialogContent.displayName = 'ModalDialogContent'
 
 export const Modal = ({
   isOpen,
@@ -40,11 +37,24 @@ export const Modal = ({
   className = '',
 }) => {
   const modalRef = useRef(null)
+  const modalContentRef = useRef(null)
+
+  const handleBackdropClick = e => {
+    // Close modal only if click is on the backdrop (modal-container), not on the content
+    if (onClose && e.target === modalRef.current) {
+      onClose()
+    }
+  }
 
   if (isOpen) {
     return (
-      <div ref={modalRef} className={styles['modal-container']}>
+      <div
+        ref={modalRef}
+        className={styles['modal-container']}
+        onClick={handleBackdropClick}
+      >
         <ModalDialogContent
+          ref={modalContentRef}
           width={width}
           onClose={onClose}
           scrollBehavior={scrollBehavior}

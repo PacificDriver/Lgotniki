@@ -1,3 +1,14 @@
+.side-container-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(35, 48, 67, 0.28);
+  z-index: var(--m-z-index-modal-backdrop, 1000);
+  transition: opacity 0.4s ease-in-out;
+}
+
 .side-container {
   width: 35vw;
   background: var(--m-sidebar-background-color);
@@ -13,6 +24,7 @@
   transition: transform 0.4s ease-in-out;
   border-left: 1px solid var(--m-border-color);
   color: var(--m-text);
+  z-index: var(--m-z-index-modal, 1001);
 
   &--title {
     font-size: 16px;

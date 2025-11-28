@@ -3,14 +3,36 @@ import { BeneficiaryModel } from '../models/Beneficiary';
 import { AuthRequest } from '../middleware/auth';
 import { BeneficiaryStatus, OperationType } from '../types';
 
+const normalizeDateInput = (value?: string | Date | null): Date | null => {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === 'string') {
+    if (value.length === 10 && !value.includes('T')) {
+      return new Date(`${value}T00:00:00Z`);
+    }
+    return new Date(value);
+  }
+
+  return new Date(value);
+};
+
 export const createBeneficiary = async (
   req: AuthRequest,
   res: Response
 ): Promise<Response | void> => {
   try {
+    const birthDate = normalizeDateInput(req.body.birthDate);
+    if (!birthDate) {
+      return res
+        .status(400)
+        .json({ error: 'Некорректная дата рождения. Укажите дату в формате ГГГГ-ММ-ДД.' });
+    }
+
     const data = {
       fullName: req.body.fullName,
-      birthDate: new Date(req.body.birthDate),
+      birthDate,
       phone: req.body.phone,
       email: req.body.email,
       snils: req.body.snils,
@@ -70,13 +92,29 @@ export const listBeneficiaries = async (
   try {
     const { status, benefitTypeId, search, limit, offset } = req.query;
 
-    const result = await BeneficiaryModel.findAll({
-      status: status as BeneficiaryStatus,
-      benefitTypeId: benefitTypeId as string,
-      search: search as string,
-      limit: limit ? parseInt(limit as string) : undefined,
-      offset: offset ? parseInt(offset as string) : undefined,
-    });
+    const filters: any = {};
+    
+    if (status && status !== '' && status !== 'undefined') {
+      filters.status = status as BeneficiaryStatus;
+    }
+    
+    if (benefitTypeId && benefitTypeId !== '' && benefitTypeId !== 'undefined') {
+      filters.benefitTypeId = benefitTypeId as string;
+    }
+    
+    if (search && search !== '' && search !== 'undefined') {
+      filters.search = search as string;
+    }
+    
+    if (limit) {
+      filters.limit = parseInt(limit as string);
+    }
+    
+    if (offset) {
+      filters.offset = parseInt(offset as string);
+    }
+
+    const result = await BeneficiaryModel.findAll(filters);
 
     return res.json(result);
   } catch (error) {
@@ -99,7 +137,15 @@ export const updateBeneficiary = async (
 
     const updateData: any = {};
     if (req.body.fullName !== undefined) updateData.fullName = req.body.fullName;
-    if (req.body.birthDate !== undefined) updateData.birthDate = new Date(req.body.birthDate);
+    if (req.body.birthDate !== undefined) {
+      const normalizedBirthDate = normalizeDateInput(req.body.birthDate);
+      if (!normalizedBirthDate) {
+        return res
+          .status(400)
+          .json({ error: 'Некорректная дата рождения. Укажите дату в формате ГГГГ-ММ-ДД.' });
+      }
+      updateData.birthDate = normalizedBirthDate;
+    }
     if (req.body.phone !== undefined) updateData.phone = req.body.phone;
     if (req.body.email !== undefined) updateData.email = req.body.email;
     if (req.body.snils !== undefined) updateData.snils = req.body.snils;

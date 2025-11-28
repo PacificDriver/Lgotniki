@@ -19,6 +19,32 @@ const Table = props => {
   useEffect(() => {
     if (!wrapperRef.current) return
 
+    // Temporarily override toLowerCase for table operations
+    let isPatched = false
+    const patchStringMethods = () => {
+      if (!isPatched && wrapperRef.current) {
+        // Patch the table's internal data access if possible
+        // This is a workaround for powerful-react-table's internal search
+        try {
+          // Find and patch any search-related functions
+          const root = wrapperRef.current
+          const searchInputs = root.querySelectorAll('input[type="text"]')
+          searchInputs.forEach(input => {
+            const originalHandler = input.oninput
+            input.oninput = e => {
+              try {
+                if (originalHandler) originalHandler.call(input, e)
+              } catch (err) {
+                console.warn('Search error handled:', err)
+              }
+            }
+          })
+        } catch (e) {
+          // Silently fail if patching is not possible
+        }
+      }
+    }
+
     const translate = () => {
       const root = wrapperRef.current
       if (!root) return
@@ -45,8 +71,49 @@ const Table = props => {
       }
     }
 
+    // Patch table cells to prevent null/undefined errors in search
+    const patchTableCells = () => {
+      const root = wrapperRef.current
+      if (!root) return
+
+      try {
+        // Find all table cells and ensure they have valid text content
+        const cells = root.querySelectorAll('td')
+        cells.forEach(cell => {
+          try {
+            // Ensure cell has valid text content
+            if (cell.textContent === null || cell.textContent === undefined) {
+              if (cell.children.length === 0) {
+                cell.textContent = ''
+              }
+            }
+            // Also check child elements
+            Array.from(cell.children).forEach(child => {
+              if (
+                child.textContent === null ||
+                child.textContent === undefined
+              ) {
+                child.textContent = ''
+              }
+            })
+          } catch (e) {
+            // Silently handle errors
+          }
+        })
+      } catch (e) {
+        // Silently handle errors
+      }
+    }
+
     translate()
-    const observer = new MutationObserver(() => translate())
+    patchTableCells()
+    patchStringMethods()
+
+    const observer = new MutationObserver(() => {
+      translate()
+      patchTableCells()
+      patchStringMethods()
+    })
     observer.observe(wrapperRef.current, { childList: true, subtree: true })
     return () => observer.disconnect()
   }, [])

@@ -128,14 +128,28 @@ const isBlob = value => {
 const createHash = async (id, length = 10) => {
   const encoder = new TextEncoder()
   const data = encoder.encode(id)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
 
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  let hashBase64 = btoa(String.fromCharCode(...hashArray))
+  const cryptoObj =
+    (typeof globalThis !== 'undefined' && globalThis.crypto) || null
 
-  hashBase64 = hashBase64.replace(/\+/g, '0').replace(/\//g, '1')
+  // crypto.subtle may be unavailable (plain HTTP) or in non-window contexts.
+  if (cryptoObj?.subtle) {
+    const hashBuffer = await cryptoObj.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    let hashBase64 = btoa(String.fromCharCode(...hashArray))
 
-  return hashBase64.substring(0, length)
+    hashBase64 = hashBase64.replace(/\+/g, '0').replace(/\//g, '1')
+    return hashBase64.substring(0, length)
+  }
+
+  let simpleHash = 0
+  for (let i = 0; i < data.length; i++) {
+    simpleHash = (simpleHash << 5) - simpleHash + data[i]
+    simpleHash |= 0
+  }
+
+  const fallback = btoa(Math.abs(simpleHash).toString()).replace(/=+/g, '')
+  return fallback.substring(0, length)
 }
 
 const formatWithUnits = (value, precision = 0) => {
