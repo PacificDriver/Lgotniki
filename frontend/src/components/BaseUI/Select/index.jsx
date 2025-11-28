@@ -294,14 +294,14 @@ const Select = ({
       if (value !== undefined) {
         nextValue = Array.isArray(value)
           ? selection.map(item => item.value)
-          : selection[0]?.value ?? ''
+          : (selection[0]?.value ?? '')
       } else if (selected !== undefined) {
         nextValue = unique
-          ? selection[0]?.value ?? ''
+          ? (selection[0]?.value ?? '')
           : selection.map(item => item.value)
       } else {
         nextValue = unique
-          ? selection[0]?.value ?? ''
+          ? (selection[0]?.value ?? '')
           : selection.map(item => item.value)
       }
 
@@ -332,7 +332,9 @@ const Select = ({
     setSelectionOptions([...items])
 
     if (optionAlreadyExists !== -1) {
-      const values = currentSelection.filter((_, i) => i !== optionAlreadyExists)
+      const values = currentSelection.filter(
+        (_, i) => i !== optionAlreadyExists
+      )
       setCurrentSelection(values)
       emitSelection(values)
       return
