@@ -87,6 +87,7 @@ export class BeneficiaryModel {
     birthMonth?: number;
     birthDay?: number;
     residence?: string;
+    beneficiaryIds?: string[];
     limit?: number;
     offset?: number;
   }): Promise<{ beneficiaries: Beneficiary[]; total: number }> {
@@ -154,6 +155,13 @@ export class BeneficiaryModel {
       paramCount++;
       query += ` AND b.residence ILIKE $${paramCount}`;
       params.push(`%${filters.residence}%`);
+    }
+
+    // Filter by specific beneficiary IDs (has priority over other filters)
+    if (filters?.beneficiaryIds && Array.isArray(filters.beneficiaryIds) && filters.beneficiaryIds.length > 0) {
+      paramCount++;
+      query += ` AND b.id = ANY($${paramCount}::uuid[])`;
+      params.push(filters.beneficiaryIds);
     }
 
     // Get total count

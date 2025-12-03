@@ -36,14 +36,21 @@ export class BenefitCalculationService {
 
       // Get beneficiaries based on filters
       const filters: any = {};
-      if (task.filters?.status) filters.status = task.filters.status;
-      if (task.filters?.benefitTypeId) filters.benefitTypeId = task.filters.benefitTypeId;
-      if (task.filters?.search) filters.search = task.filters.search;
-      if (task.filters?.ageFrom) filters.ageFrom = task.filters.ageFrom;
-      if (task.filters?.ageTo) filters.ageTo = task.filters.ageTo;
-      if (task.filters?.birthMonth) filters.birthMonth = task.filters.birthMonth;
-      if (task.filters?.birthDay) filters.birthDay = task.filters.birthDay;
-      if (task.filters?.residence) filters.residence = task.filters.residence;
+      
+      // If specific beneficiary IDs are provided, they have priority
+      if (task.filters?.beneficiaryIds && Array.isArray(task.filters.beneficiaryIds) && task.filters.beneficiaryIds.length > 0) {
+        filters.beneficiaryIds = task.filters.beneficiaryIds;
+      } else {
+        // Otherwise use other filters
+        if (task.filters?.status) filters.status = task.filters.status;
+        if (task.filters?.benefitTypeId) filters.benefitTypeId = task.filters.benefitTypeId;
+        if (task.filters?.search) filters.search = task.filters.search;
+        if (task.filters?.ageFrom) filters.ageFrom = task.filters.ageFrom;
+        if (task.filters?.ageTo) filters.ageTo = task.filters.ageTo;
+        if (task.filters?.birthMonth) filters.birthMonth = task.filters.birthMonth;
+        if (task.filters?.birthDay) filters.birthDay = task.filters.birthDay;
+        if (task.filters?.residence) filters.residence = task.filters.residence;
+      }
 
       const { beneficiaries, total } = await BeneficiaryModel.findAll(filters);
       

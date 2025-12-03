@@ -122,6 +122,21 @@ export default function BenefitTypes() {
     setToasts([...values])
   }
 
+  // Получаем выбранные строки из таблицы через DOM
+  // Редактирование по двойному клику
+  const handleDoubleClickEdit = (id, e) => {
+    // Предотвращаем раскрытие строки при двойном клике
+    e?.stopPropagation()
+
+    if (!isAdmin() && !isOperator()) return
+
+    const benefitType = benefitTypes.find(bt => bt.id === id)
+    if (benefitType) {
+      setSidebarOpened(true)
+      setBenefitTypeDetail(benefitType)
+    }
+  }
+
   const closeSidebar = () => {
     setSidebarOpened(false)
     setBenefitTypeDetail(null)
@@ -372,87 +387,108 @@ export default function BenefitTypes() {
               />
             </div>
 
-            <Table
-              title="Список типов льгот"
-              columns={headers}
-              tableId="benefit-types-list"
-              loading={loading}
-              checkboxSelection
-              disableColumnMenu
-              disableSearchFilter
-              disableExport
-            >
-              {benefitTypes.map(benefitType => {
-                // Normalize all values to prevent null/undefined errors in table search
-                const normalizeValue = value => {
-                  if (value === null || value === undefined) return ''
-                  return String(value)
-                }
+            <div>
+              <Table
+                title="Список типов льгот"
+                columns={headers}
+                tableId="benefit-types-list"
+                loading={loading}
+                disableColumnMenu
+                disableSearchFilter
+                disableExport
+              >
+                {benefitTypes.map(benefitType => {
+                  // Normalize all values to prevent null/undefined errors in table search
+                  const normalizeValue = value => {
+                    if (value === null || value === undefined) return ''
+                    return String(value)
+                  }
 
-                const getCalculationParamsText = () => {
-                  if (!benefitType.calculationParams) return '-'
-                  const params = benefitType.calculationParams
-                  if (params.trips) return `${params.trips} поездок`
-                  if (params.kilometers) return `${params.kilometers} км`
-                  if (params.discountPercent)
-                    return `${params.discountPercent}%`
-                  return '-'
-                }
+                  const getCalculationParamsText = () => {
+                    if (!benefitType.calculationParams) return '-'
+                    const params = benefitType.calculationParams
+                    if (params.trips) return `${params.trips} поездок`
+                    if (params.kilometers) return `${params.kilometers} км`
+                    if (params.discountPercent)
+                      return `${params.discountPercent}%`
+                    return '-'
+                  }
 
-                return (
-                  <ExpandableRow
-                    key={benefitType.id}
-                    id={benefitType.id}
-                    expandableContent={renderBenefitTypeDetails(benefitType)}
-                  >
-                    <Td>{normalizeValue(benefitType.name)}</Td>
-                    <Td>{normalizeValue(benefitType.description) || '-'}</Td>
-                    <Td>
-                      {normalizeValue(
-                        getCalculationTypeLabel(benefitType.calculationType)
-                      )}
-                    </Td>
-                    <Td>{getCalculationParamsText()}</Td>
-                    <Td>
-                      <Lozenge
-                        appearance={
-                          benefitType.isActive
-                            ? 'success-subtle'
-                            : 'neutral-subtle'
+                  return (
+                    <ExpandableRow
+                      key={benefitType.id}
+                      id={benefitType.id}
+                      expandableContent={renderBenefitTypeDetails(benefitType)}
+                      onDoubleClick={
+                        isAdmin() || isOperator()
+                          ? handleDoubleClickEdit
+                          : undefined
+                      }
+                    >
+                      <Td
+                        onDoubleClick={
+                          isAdmin() || isOperator()
+                            ? () => {
+                                setSidebarOpened(true)
+                                setBenefitTypeDetail(benefitType)
+                              }
+                            : undefined
                         }
+                        style={{
+                          cursor:
+                            isAdmin() || isOperator() ? 'pointer' : 'default',
+                        }}
                       >
+                        {normalizeValue(benefitType.name)}
+                      </Td>
+                      <Td>{normalizeValue(benefitType.description) || '-'}</Td>
+                      <Td>
                         {normalizeValue(
-                          benefitType.isActive ? 'Активен' : 'Неактивен'
+                          getCalculationTypeLabel(benefitType.calculationType)
                         )}
-                      </Lozenge>
-                    </Td>
-                    <Td>
-                      <div className="d-flex align-items-center">
-                        {(isAdmin() || isOperator()) && (
-                          <IconButton
-                            icon={<FiEdit3 style={{ fontSize: '18px' }} />}
-                            appearance="subtle"
-                            shape="circle"
-                            onClick={() => {
-                              setSidebarOpened(true)
-                              setBenefitTypeDetail(benefitType)
-                            }}
-                          />
-                        )}
-                        {isAdmin() && (
-                          <IconButton
-                            icon={<FiTrash2 style={{ fontSize: '18px' }} />}
-                            appearance="subtle"
-                            shape="circle"
-                            onClick={() => handleDelete(benefitType.id)}
-                          />
-                        )}
-                      </div>
-                    </Td>
-                  </ExpandableRow>
-                )
-              })}
-            </Table>
+                      </Td>
+                      <Td>{getCalculationParamsText()}</Td>
+                      <Td>
+                        <Lozenge
+                          appearance={
+                            benefitType.isActive
+                              ? 'success-subtle'
+                              : 'neutral-subtle'
+                          }
+                        >
+                          {normalizeValue(
+                            benefitType.isActive ? 'Активен' : 'Неактивен'
+                          )}
+                        </Lozenge>
+                      </Td>
+                      <Td>
+                        <div className="d-flex align-items-center">
+                          {(isAdmin() || isOperator()) && (
+                            <IconButton
+                              icon={<FiEdit3 style={{ fontSize: '18px' }} />}
+                              appearance="subtle"
+                              shape="circle"
+                              onClick={() => {
+                                setSidebarOpened(true)
+                                setBenefitTypeDetail(benefitType)
+                              }}
+                            />
+                          )}
+                          {isAdmin() && (
+                            <IconButton
+                              icon={<FiTrash2 style={{ fontSize: '18px' }} />}
+                              appearance="subtle"
+                              shape="circle"
+                              onClick={() => handleDelete(benefitType.id)}
+                            />
+                          )}
+                        </div>
+                      </Td>
+                    </ExpandableRow>
+                  )
+                })}
+              </Table>
+            </div>
           </ContainerItem>
         </Container>
       </AppPage>

@@ -18,6 +18,7 @@ import { Toast, ToastContainer } from '../../../components/CustomUI/Toast'
 import Lozenge from '../../../components/BaseUI/Lozenge'
 import Input from '../../../components/BaseUI/Input'
 import Select from '../../../components/BaseUI/Select'
+import BeneficiaryAutocomplete from '../../../components/CustomUI/BeneficiaryAutocomplete'
 import { FiPlay, FiEye, FiPlus, FiX, FiDownload } from 'react-icons/fi'
 
 const statusOptions = [
@@ -549,8 +550,31 @@ export default function CalculationTasks() {
                     key={task.id}
                     id={task.id}
                     expandableContent={renderTaskDetails(task)}
+                    onDoubleClick={
+                      isAdmin() || isOperator()
+                        ? () => {
+                            setSidebarOpened(true)
+                            setTaskDetail(task)
+                          }
+                        : undefined
+                    }
                   >
-                    <Td>{normalizeValue(task.name)}</Td>
+                    <Td
+                      onDoubleClick={
+                        isAdmin() || isOperator()
+                          ? () => {
+                              setSidebarOpened(true)
+                              setTaskDetail(task)
+                            }
+                          : undefined
+                      }
+                      style={{
+                        cursor:
+                          isAdmin() || isOperator() ? 'pointer' : 'default',
+                      }}
+                    >
+                      {normalizeValue(task.name)}
+                    </Td>
                     <Td>{normalizeValue(benefitType?.name) || '-'}</Td>
                     <Td>{getRouteInfo(task)}</Td>
                     <Td>
@@ -1004,20 +1028,44 @@ function TaskForm({ task, benefitTypes, onSave }) {
         />
       </div>
       <div className="mb-3">
-        <Select
-          label="Тип льготы для назначения"
-          value={formData.benefitTypeId}
-          onChange={e =>
-            setFormData({ ...formData, benefitTypeId: e.target.value })
-          }
-          options={benefitTypes.map(bt => ({
-            value: bt.id,
-            label: bt.name,
-          }))}
-          selected={formData.benefitTypeId ? [formData.benefitTypeId] : []}
-          unique={true}
-          required
-        />
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px',
+          }}
+        >
+          <div style={{ flex: 1 }}>
+            <Select
+              label="Тип льготы для назначения"
+              value={formData.benefitTypeId}
+              onChange={e =>
+                setFormData({ ...formData, benefitTypeId: e.target.value })
+              }
+              options={benefitTypes.map(bt => ({
+                value: bt.id,
+                label: bt.name,
+              }))}
+              selected={formData.benefitTypeId ? [formData.benefitTypeId] : []}
+              unique={true}
+              required
+            />
+          </div>
+          {formData.benefitTypeId && (
+            <IconButton
+              icon={<FiX style={{ fontSize: '16px' }} />}
+              appearance="subtle"
+              shape="circle"
+              onClick={() => setFormData({ ...formData, benefitTypeId: '' })}
+              style={{
+                marginTop: '26px',
+                flexShrink: 0,
+              }}
+              title="Очистить выбор"
+            />
+          )}
+        </div>
       </div>
 
       <h4 style={{ marginTop: '24px', marginBottom: '16px', fontSize: '16px' }}>
@@ -1298,11 +1346,23 @@ function TaskForm({ task, benefitTypes, onSave }) {
       </div>
 
       <div className="mb-3">
-        <Input
-          label="Поиск по ФИО, телефону, email"
-          value={formData.filters.search || ''}
-          onChange={e => handleFilterChange('search', e.target.value)}
-          placeholder="Введите текст для поиска"
+        <BeneficiaryAutocomplete
+          label="Конкретные льготники"
+          value={
+            formData.filters.beneficiaryIds
+              ? Array.isArray(formData.filters.beneficiaryIds)
+                ? formData.filters.beneficiaryIds
+                : [formData.filters.beneficiaryIds]
+              : []
+          }
+          onChange={e => {
+            const ids = Array.isArray(e.target.value) ? e.target.value : []
+            handleFilterChange(
+              'beneficiaryIds',
+              ids.length > 0 ? ids : undefined
+            )
+          }}
+          placeholder="Начните вводить фамилию для поиска льготников..."
         />
       </div>
 

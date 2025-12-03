@@ -6,7 +6,7 @@ export default function Content({ title, children }) {
   return (
     <div className={styles['content-container']}>
       <div className={styles['logo']}>
-        <img src={require('../../../assets/logos/logo-1.png')} alt="Magnun" />
+        <img src={require('../../../assets/logos/its-logo.svg')} alt="ITS" />
       </div>
 
       <div className={styles['content-container__content']}>

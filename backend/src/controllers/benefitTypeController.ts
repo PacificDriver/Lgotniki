@@ -146,4 +146,60 @@ export const deleteBenefitType = async (
   }
 };
 
+export const deleteBenefitTypes = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response | void> => {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'Необходимо указать массив ID для удаления' });
+    }
+
+    const results = {
+      deleted: [] as string[],
+      failed: [] as Array<{ id: string; error: string }>,
+      skipped: [] as Array<{ id: string; reason: string }>,
+    };
+
+    for (const id of ids) {
+      try {
+        const benefitType = await BenefitTypeModel.findById(id);
+        if (!benefitType) {
+          results.failed.push({ id, error: 'Тип льготы не найден' });
+          continue;
+        }
+
+        // Check for related data
+        const relatedData = await BenefitTypeModel.hasRelatedData(id);
+        if (relatedData.hasData) {
+          results.skipped.push({
+            id,
+            reason: `Есть связанные данные: ${relatedData.details.join(', ')}`,
+          });
+          continue;
+        }
+
+        const deleted = await BenefitTypeModel.delete(id);
+        if (deleted) {
+          results.deleted.push(id);
+        } else {
+          results.failed.push({ id, error: 'Не удалось удалить' });
+        }
+      } catch (error: any) {
+        results.failed.push({ id, error: error.message || 'Ошибка при удалении' });
+      }
+    }
+
+    return res.json({
+      message: `Удалено: ${results.deleted.length}, Пропущено: ${results.skipped.length}, Ошибок: ${results.failed.length}`,
+      results,
+    });
+  } catch (error) {
+    console.error('Bulk delete benefit types error:', error);
+    return res.status(500).json({ error: 'Ошибка при массовом удалении типов льгот' });
+  }
+};
+
 

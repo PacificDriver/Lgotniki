@@ -149,6 +149,20 @@ export default function Beneficiaries() {
     setToasts([...values])
   }
 
+  // Редактирование по двойному клику
+  const handleDoubleClickEdit = (id, e) => {
+    // Предотвращаем другие действия при двойном клике
+    e?.stopPropagation()
+
+    if (!isAdmin() && !isOperator()) return
+
+    const beneficiary = beneficiaries.find(b => b.id === id)
+    if (beneficiary) {
+      setSidebarOpened(true)
+      setBeneficiaryDetail(beneficiary)
+    }
+  }
+
   const handleCloseModal = () => {
     setOpenModal(false)
     setBeneficiaryDetail(null)
@@ -437,8 +451,34 @@ export default function Beneficiaries() {
                 const hashPan = normalizeValue(beneficiary.hashPan) || '-'
 
                 return (
-                  <Tr key={beneficiary.id} id={beneficiary.id}>
-                    <Td>{normalizeValue(beneficiary.fullName)}</Td>
+                  <Tr
+                    key={beneficiary.id}
+                    id={beneficiary.id}
+                    onDoubleClick={
+                      isAdmin() || isOperator()
+                        ? e => handleDoubleClickEdit(beneficiary.id, e)
+                        : undefined
+                    }
+                    style={{
+                      cursor: isAdmin() || isOperator() ? 'pointer' : 'default',
+                    }}
+                  >
+                    <Td
+                      onDoubleClick={
+                        isAdmin() || isOperator()
+                          ? () => {
+                              setSidebarOpened(true)
+                              setBeneficiaryDetail(beneficiary)
+                            }
+                          : undefined
+                      }
+                      style={{
+                        cursor:
+                          isAdmin() || isOperator() ? 'pointer' : 'default',
+                      }}
+                    >
+                      {normalizeValue(beneficiary.fullName)}
+                    </Td>
                     <Td>{normalizeValue(beneficiary.phone)}</Td>
                     <Td>{email}</Td>
                     <Td>{snils}</Td>

@@ -45,6 +45,14 @@ async function runMigrations() {
     console.log(`Найдено ${files.length} миграций:`)
     files.forEach(file => console.log(`  - ${file}`))
 
+    // Коды ошибок PostgreSQL, которые можно игнорировать (уже существует)
+    const ignorableErrorCodes = [
+      '42710', // duplicate_object - объект уже существует
+      '42P07', // duplicate_table - таблица уже существует
+      '42704', // undefined_object - объект не существует (для DROP)
+      '42P16', // invalid_table_definition - для случаев, когда структура уже есть
+    ]
+
     for (const file of files) {
       const filePath = path.join(migrationsDir, file)
       const sql = fs.readFileSync(filePath, 'utf8')
@@ -58,6 +66,13 @@ async function runMigrations() {
         console.log(`✓ Миграция ${file} выполнена успешно`)
       } catch (error) {
         await client.query('ROLLBACK')
+        
+        // Проверяем, можно ли игнорировать ошибку
+        if (ignorableErrorCodes.includes(error.code)) {
+          console.warn(`⚠ Миграция ${file}: объект уже существует, пропускаем (${error.code}: ${error.message})`)
+          continue
+        }
+        
         console.error(`✗ Ошибка при выполнении ${file}:`, error.message)
         throw error
       }

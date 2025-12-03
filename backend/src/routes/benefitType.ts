@@ -5,6 +5,7 @@ import {
   listBenefitTypes,
   updateBenefitType,
   deleteBenefitType,
+  deleteBenefitTypes,
   checkRelatedData,
 } from '../controllers/benefitTypeController';
 import { authenticate, requireRole } from '../middleware/auth';
@@ -24,6 +25,7 @@ router.post('/', requireRole('admin', 'operator'), createBenefitType);
 router.put('/:id', requireRole('admin', 'operator'), updateBenefitType);
 
 // Delete - only admin
+router.delete('/bulk', requireRole('admin'), deleteBenefitTypes);
 router.delete('/:id', requireRole('admin'), deleteBenefitType);
 
 export default router;

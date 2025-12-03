@@ -9,6 +9,7 @@ export default function ExpandableRow({
   id,
   onClick,
   onExpand,
+  onDoubleClick,
   ...props
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -36,6 +37,24 @@ export default function ExpandableRow({
     }
   }
 
+  const handleDoubleClickEvent = e => {
+    // Проверяем, что событие существует
+    if (!e || !e.target) return
+
+    // Не обрабатываем двойной клик, если клик был по кнопке или ссылке
+    if (
+      e.target.closest('button') ||
+      e.target.closest('a') ||
+      e.target.closest('.expandable-row-actions')
+    ) {
+      return
+    }
+
+    if (onDoubleClick) {
+      onDoubleClick(id, e)
+    }
+  }
+
   return (
     <>
       <Tr
@@ -43,6 +62,7 @@ export default function ExpandableRow({
         id={id}
         className={`expandable-row ${isExpanded ? 'expanded' : ''}`}
         onClick={handleRowClick}
+        onDoubleClick={handleDoubleClickEvent}
         style={{ cursor: 'pointer', ...props.style }}
       >
         {React.Children.map(children, (child, index) => {

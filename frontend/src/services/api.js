@@ -125,6 +125,10 @@ export const benefitTypesAPI = {
     const response = await api.delete(`/benefit-types/${id}`)
     return response.data
   },
+  deleteMany: async ids => {
+    const response = await api.delete('/benefit-types/bulk', { data: { ids } })
+    return response.data
+  },
 }
 
 // Calculation Tasks API

@@ -10,35 +10,11 @@
   left: 0;
   right: 0;
   z-index: 9999;
+  background-color: var(--m-white, #ffffff);
 
-  svg {
-    font-family: Arial, sans-serif;
-    font-size: 40px;
-    font-weight: bold;
-    fill: #003366;
-  }
-
-  &__letter {
-    opacity: 0;
-    -webkit-animation: fadeIn 1s ease-in-out infinite alternate;
-    animation: fadeIn 1s ease-in-out infinite alternate;
-  }
-
-  @-webkit-keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+  &__logo {
+    max-width: 300px;
+    max-height: 100px;
+    object-fit: contain;
   }
 }

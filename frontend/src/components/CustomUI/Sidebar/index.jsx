@@ -1,12 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { ThemeContext } from '../../../contexts/theme'
-import { useTheme } from '../../../hooks/useTheme'
+import React, { useEffect, useState } from 'react'
 
 import Navigation from './Navigation'
 
-import logoLight from '../../../assets/logos/logo-1.png'
-import logoDark from '../../../assets/logos/logo-2.png'
-import logoMobileFullTheme from '../../../assets/logos/logo-3.png'
+import itsLogo from '../../../assets/logos/its-logo.svg'
 
 import { LuArrowLeftToLine, LuArrowRightToLine } from 'react-icons/lu'
 import { MdClose } from 'react-icons/md'
@@ -23,17 +19,7 @@ const Sidebar = ({
   createRef,
   isMouseOver = false,
 }) => {
-  const theme = useTheme()
-  const [logo, setLogo] = useState(null)
-  const [logoMobile, setLogoMobile] = useState(null)
   const [toggle, setToggle] = useState(false)
-
-  const { sidebarTheme } = useContext(ThemeContext)
-
-  useEffect(() => {
-    setLogo(theme === 'dark' || sidebarTheme === 'dark' ? logoDark : logoLight)
-    setLogoMobile(logoMobileFullTheme)
-  }, [theme, sidebarTheme])
 
   useEffect(() => {
     setToggle(toggledMenu)
@@ -56,17 +42,17 @@ const Sidebar = ({
           <div className={styles['sidebar-container__header__logo']}>
             {toggle && (
               <img
-                src={logo}
-                alt="Magnun"
-                width={120}
+                src={itsLogo}
+                alt="ITS"
+                width={64}
                 className={styles['sidebar-container__header__logo--desktop']}
               />
             )}
             {!toggle && (
               <img
-                src={isMouseOver ? logo : logoMobile}
-                alt="Magnun"
-                width={isMouseOver ? 120 : 32}
+                src={itsLogo}
+                alt="ITS"
+                width={isMouseOver ? 64 : 32}
                 className={styles['sidebar-container__header__logo--mobile']}
               />
             )}
@@ -75,7 +61,7 @@ const Sidebar = ({
 
         {menuMobile && (
           <div className={styles['sidebar-container__header__mobile']}>
-            <img src={logo} width={120} alt="Magnun" />
+            <img src={itsLogo} width={64} alt="ITS" />
 
             <MdClose
               onClick={onClose}
