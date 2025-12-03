@@ -1,3 +1,5 @@
+@import url('./ExpandableRow.scss');
+
 .localized-table {
   width: 100%;
 }
@@ -5,5 +7,105 @@
 .localized-table .no__data {
   font-size: 15px;
   font-weight: 500;
+}
+
+// Мобильная адаптация для таблиц
+@media (max-width: 767.88px) {
+  .localized-table {
+    font-size: 12px;
+
+    table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: block;
+    }
+
+    tr {
+      display: block;
+      margin-bottom: 12px;
+      border: 1px solid var(--m-subtle, #e1e4e8);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--m-white, #fff);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 0;
+      border: none;
+      border-bottom: 1px solid var(--m-subtle, #e1e4e8);
+      text-align: left !important;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      // Метки для мобильных устройств
+      &::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--m-text-light, #6b7280);
+        margin-right: 12px;
+        flex-shrink: 0;
+        min-width: 120px;
+      }
+    }
+
+    // Улучшаем видимость элементов управления на мобильных
+    .table-header,
+    .table-toolbar {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .table-search {
+      width: 100%;
+      margin-bottom: 12px;
+
+      input {
+        width: 100%;
+      }
+    }
+
+    .table-pagination {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .localized-table {
+    font-size: 11px;
+
+    tr {
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    td {
+      padding: 6px 0;
+      font-size: 11px;
+
+      &::before {
+        min-width: 100px;
+        font-size: 11px;
+        margin-right: 8px;
+      }
+    }
+  }
 }
 

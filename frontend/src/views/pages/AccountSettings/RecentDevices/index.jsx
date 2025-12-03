@@ -53,7 +53,7 @@ export default function RecentDevices() {
     <div className="account-settings-container__basic-information">
       <h4>Gerencie suas atividades</h4>
 
-      <Table columns={headers} identifier="recent_devices">
+      <Table columns={headers} identifier="recent_devices" disableExport>
         {list?.map((item, index) => (
           <Tr key={index}>
             <Td>

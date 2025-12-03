@@ -258,6 +258,7 @@ export default function Crm() {
             columns={headersTransaction}
             tableId="recent-transaction"
             disableColumnMenu
+            disableExport
           >
             {recentTransactions?.map((transaction, index) => (
               <Tr key={index} id={transaction?.id || index}>

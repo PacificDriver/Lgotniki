@@ -241,6 +241,7 @@ export default function BeneficiaryDetail() {
                   { name: 'Тип операции', dataType: 'text' },
                   { name: 'Выполнил', dataType: 'text' },
                 ]}
+                disableExport
               >
                 {operations.map(op => (
                   <Tr key={op.id}>

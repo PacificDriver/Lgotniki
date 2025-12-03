@@ -1,0 +1,115 @@
+.settings-section {
+  background-color: var(--m-card-background-color);
+  box-shadow: var(--m-box-shadow);
+  border-radius: var(--m-border-radius-md);
+  padding: 24px;
+  margin-bottom: 24px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--m-border-color);
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--m-text);
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--m-text-light);
+      line-height: 1.5;
+    }
+  }
+
+  &__content {
+    h4 {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--m-text);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+.empty-message {
+  padding: 32px;
+  text-align: center;
+  color: var(--m-text-light);
+  font-size: 14px;
+  background-color: var(--m-subtle-card-background-color);
+  border-radius: var(--m-border-radius);
+  border: 1px dashed var(--m-border-color);
+}
+
+.sync-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sync-log-item {
+  padding: 16px;
+  background-color: var(--m-subtle-card-background-color);
+  border-radius: var(--m-border-radius);
+  border: 1px solid var(--m-border-color);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    svg {
+      font-size: 18px;
+    }
+  }
+
+  &__date {
+    font-size: 13px;
+    color: var(--m-text-light);
+  }
+
+  &__stats {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--m-text-light);
+
+    strong {
+      color: var(--m-text);
+      font-weight: 600;
+    }
+  }
+
+  &__error {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background-color: var(--m-background-subtle-danger);
+    border-left: 3px solid var(--m-danger);
+    border-radius: var(--m-border-radius);
+    font-size: 13px;
+    color: var(--m-danger);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

@@ -20,6 +20,7 @@
 @import url('./tokens/_shadows.scss');
 @import url('./tokens/_transitions.scss');
 @import url('./tokens/_borders.scss');
+@import url('./responsive.scss');
 
 * {
   margin: 0;
@@ -40,9 +41,10 @@ body {
   line-height: 22px;
 }
 
+// Scrollbar styles for Webkit browsers (Chrome, Safari, Edge)
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 14px;
+  height: 14px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -52,6 +54,11 @@ body {
   background-color: #d1d6db;
   border-right: none;
   border-left: none;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #b1b6bb;
 }
 
 ::-webkit-scrollbar-track-piece:end {
@@ -60,6 +67,12 @@ body {
 
 ::-webkit-scrollbar-track-piece:start {
   background: transparent;
+}
+
+// Scrollbar styles for Firefox
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #d1d6db transparent;
 }
 
 .flex-container {

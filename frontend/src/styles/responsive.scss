@@ -1,0 +1,341 @@
+// Мобильная адаптация для всего приложения
+
+/* ========================================
+   Базовые стили для мобильных устройств
+   ======================================== */
+
+@media (max-width: 767.88px) {
+  // Уменьшаем размеры шрифтов
+  body {
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  // Адаптация заголовков
+  .title-page {
+    font-size: 1.1rem;
+    line-height: 18px;
+    margin-bottom: 6px;
+  }
+
+  .sub-title-page {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .page-label {
+    font-size: 1.1rem;
+    line-height: 20px;
+  }
+
+  // Адаптация карточек
+  .card-content,
+  .card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  // Адаптация кнопок
+  .btn,
+  button {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  // Адаптация форм
+  input,
+  select,
+  textarea {
+    font-size: 13px;
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+
+  // Адаптация отступов
+  .mb-3 {
+    margin-bottom: 12px !important;
+  }
+
+  .mb-4 {
+    margin-bottom: 16px !important;
+  }
+
+  .mt-3 {
+    margin-top: 12px !important;
+  }
+
+  .mt-4 {
+    margin-top: 16px !important;
+  }
+
+  .gap-2 {
+    gap: 8px !important;
+  }
+
+  .gap-3 {
+    gap: 12px !important;
+  }
+
+  // Адаптация flex контейнеров
+  .d-flex {
+    flex-wrap: wrap;
+  }
+
+  // Адаптация таблиц
+  .powerful-react-table {
+    font-size: 12px;
+
+    table {
+      width: 100%;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    thead {
+      display: none; // Скрываем заголовки на мобильных
+    }
+
+    tbody {
+      display: block;
+    }
+
+    tr {
+      display: block;
+      margin-bottom: 12px;
+      border: 1px solid var(--m-subtle);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--m-white);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 0;
+      border: none;
+      border-bottom: 1px solid var(--m-subtle);
+      text-align: left !important;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      // Добавляем метки для мобильных
+      &::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--m-text-light);
+        margin-right: 12px;
+        flex-shrink: 0;
+        min-width: 120px;
+      }
+    }
+
+    // Скрываем некоторые элементы управления таблицей
+    .table-header,
+    .table-search,
+    .table-pagination {
+      flex-wrap: wrap;
+    }
+
+    .table-search {
+      width: 100%;
+      margin-bottom: 12px;
+
+      input {
+        width: 100%;
+      }
+    }
+  }
+
+  // Адаптация модальных окон
+  .modal-content {
+    margin: 12px;
+    max-width: calc(100% - 24px);
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+  }
+
+  // Адаптация Sidebar
+  .sidebar-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  // Адаптация AppPage
+  .app-page-container {
+    padding: 12px;
+  }
+
+  // Адаптация контейнеров
+  .container {
+    padding: 0 8px;
+  }
+
+  // Адаптация утилитных классов
+  .text-center-mobile {
+    text-align: center;
+  }
+
+  .w-100-mobile {
+    width: 100% !important;
+  }
+
+  .d-block-mobile {
+    display: block !important;
+  }
+
+  .d-none-mobile {
+    display: none !important;
+  }
+
+  // Адаптация иконок
+  svg,
+  .icon {
+    font-size: 18px;
+  }
+
+  // Адаптация списков
+  ul,
+  ol {
+    padding-left: 20px;
+  }
+
+  // Адаптация хлебных крошек
+  .breadcrumb {
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+/* ========================================
+   Стили для планшетов
+   ======================================== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  body {
+    font-size: 13.5px;
+  }
+
+  .title-page {
+    font-size: 1.15rem;
+  }
+
+  .card-content,
+  .card {
+    padding: 14px;
+  }
+
+  .app-page-container {
+    padding: 16px;
+  }
+
+  // Таблицы на планшетах - горизонтальная прокрутка
+  .powerful-react-table {
+    table {
+      min-width: 100%;
+    }
+  }
+}
+
+/* ========================================
+   Адаптация для очень маленьких экранов
+   ======================================== */
+
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+
+  .title-page {
+    font-size: 1rem;
+  }
+
+  .card-content,
+  .card {
+    padding: 10px;
+  }
+
+  .btn,
+  button {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 12px;
+    padding: 6px 10px;
+    min-height: 32px;
+  }
+
+  .app-page-container {
+    padding: 8px;
+  }
+
+  // Еще более компактные таблицы
+  .powerful-react-table {
+    font-size: 11px;
+
+    td {
+      padding: 6px 0;
+      font-size: 11px;
+
+      &::before {
+        min-width: 100px;
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+/* ========================================
+   Вспомогательные классы для адаптивности
+   ======================================== */
+
+// Показывать только на мобильных
+@media (max-width: 767.88px) {
+  .mobile-only {
+    display: block !important;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+// Показывать только на десктопе
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+
+  .desktop-only {
+    display: block !important;
+  }
+}
+
+// Горизонтальная прокрутка для таблиц на мобильных
+@media (max-width: 767.88px) {
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #d1d6db;
+      border-radius: 3px;
+    }
+  }
+}
+

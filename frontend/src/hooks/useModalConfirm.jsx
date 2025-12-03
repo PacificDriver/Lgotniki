@@ -15,6 +15,7 @@ export const useModalConfirm = ({
   confirmButtonText = 'Confirm',
   cancelButtonText = 'Cancel',
   appearance = 'primary', // primary, warning, danger
+  confirmButtonDisabled = false,
 }) => {
   const modalDiv = document.createElement('div')
   document.body.appendChild(modalDiv)
@@ -64,8 +65,24 @@ export const useModalConfirm = ({
         <p className="sub-title-page">{message}</p>
         <div className="my-3">
           <ButtonGroup placement="end" reverse>
-            <Button appearance={appearance} onClick={handleConfirm}>
-              {confirmButtonText}
+            <Button
+              appearance={confirmButtonDisabled ? 'default' : appearance}
+              onClick={handleConfirm}
+              disabled={confirmButtonDisabled}
+              style={
+                confirmButtonDisabled
+                  ? {
+                      backgroundColor: '#e3e3e1',
+                      cursor: 'not-allowed',
+                    }
+                  : {}
+              }
+            >
+              <span style={confirmButtonDisabled ? { color: '#929292' } : {}}>
+                {confirmButtonDisabled
+                  ? 'Невозможно удалить'
+                  : confirmButtonText}
+              </span>
             </Button>
             <Button appearance="subtle" onClick={handleCancel}>
               {cancelButtonText}

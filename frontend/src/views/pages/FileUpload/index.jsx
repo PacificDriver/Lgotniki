@@ -29,6 +29,25 @@ const loadModeOptions = [
   { value: 'by_load_counter', label: 'По счетчику загрузок' },
 ]
 
+const loadModeDescriptions = {
+  full_sync:
+    'Создает новые записи и обновляет существующие. Деактивирует записи, отсутствующие в файле.',
+  soft_add:
+    'Создает новые записи и обновляет существующие. Не изменяет записи, отсутствующие в файле.',
+  only_new: 'Создает только новые записи, не обновляет существующие.',
+  only_update: 'Обновляет только существующие записи, не создает новые.',
+  full_reload:
+    'Деактивирует все существующие записи, затем создает все записи из файла как новые.',
+  with_archive:
+    'Создает новые и обновляет существующие записи. Отсутствующие в файле записи переводятся в архив.',
+  with_manual_review:
+    'Создает новые и обновляет существующие записи. Отсутствующие в файле записи требуют ручной проверки.',
+  with_delayed_deactivation:
+    'Создает новые и обновляет существующие записи. Отсутствующие в файле записи деактивируются через несколько загрузок.',
+  by_load_counter:
+    'Создает новые и обновляет существующие записи, сбрасывает счетчик загрузок. Отсутствующие записи деактивируются при превышении лимита загрузок.',
+}
+
 export default function FileUpload() {
   const { isAdmin, isOperator } = useAuth()
   const [file, setFile] = useState(null)
@@ -259,6 +278,9 @@ export default function FileUpload() {
                       unique={true}
                       disabled={uploading}
                     />
+                    <div className={styles['mode-selector__description']}>
+                      {loadModeDescriptions[loadMode]}
+                    </div>
                   </div>
 
                   {/* Action Buttons */}

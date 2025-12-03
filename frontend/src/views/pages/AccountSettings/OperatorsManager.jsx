@@ -224,6 +224,7 @@ export default function OperatorsManager() {
         checkboxSelection={false}
         disableColumnMenu
         disableSearchFilter
+        disableExport
       >
         {operators.map(operator => {
           // Normalize all values to prevent null/undefined errors in table search

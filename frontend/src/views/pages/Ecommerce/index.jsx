@@ -337,6 +337,7 @@ const Ecommerce = () => {
             tableId="product-list"
             checkboxSelection
             disableColumnMenu
+            disableExport
           >
             {products.map((product, index) => (
               <Tr key={index} id={product?.id || index}>

@@ -8,14 +8,14 @@ import Button from '../../../components/BaseUI/Button'
 import IconButton from '../../../components/BaseUI/Button/IconButton'
 import Input from '../../../components/BaseUI/Input'
 import Select from '../../../components/BaseUI/Select'
-import { Table, Td, Tr } from '../../../components/BaseUI/Table'
+import { Table, Td, ExpandableRow } from '../../../components/BaseUI/Table'
 import AppPage from '../../../components/CustomUI/AppPage'
 import Container from '../../../components/CustomUI/Container'
 import ContainerItem from '../../../components/CustomUI/Container/ContainerItem'
 import SidebarContainer from '../../../components/CustomUI/SidebarContainer'
 import { Toast, ToastContainer } from '../../../components/CustomUI/Toast'
 import Lozenge from '../../../components/BaseUI/Lozenge'
-import { FiEdit3, FiTrash2 } from 'react-icons/fi'
+import { FiEdit3, FiTrash2, FiDownload } from 'react-icons/fi'
 
 export default function BenefitTypes() {
   const { isAdmin, isOperator } = useAuth()
@@ -26,14 +26,13 @@ export default function BenefitTypes() {
   const [sidebarOpened, setSidebarOpened] = useState(false)
   const [benefitTypeDetail, setBenefitTypeDetail] = useState(null)
   const [toasts, setToasts] = useState([])
+  const [isExporting, setIsExporting] = useState(false)
 
   const headers = [
     { name: 'Название', dataType: 'text' },
     { name: 'Описание', dataType: 'text' },
     { name: 'Тип расчета', dataType: 'text' },
     { name: 'Параметры расчета', dataType: 'text' },
-    { name: 'Маршруты', dataType: 'text' },
-    { name: 'Населенные пункты', dataType: 'text' },
     { name: 'Статус', dataType: 'text' },
     { name: 'Действия' },
   ]
@@ -60,12 +59,31 @@ export default function BenefitTypes() {
 
   const handleDelete = async id => {
     const benefitType = benefitTypes.find(bt => bt.id === id)
+
+    // Check for related data before showing modal
+    let hasRelatedData = false
+    let relatedDataMessage =
+      'Удаление необратимо. Все связанные данные будут затронуты.'
+
+    try {
+      const relatedData = await benefitTypesAPI.checkRelatedData(id)
+      if (relatedData.hasData) {
+        hasRelatedData = true
+        relatedDataMessage = `Невозможно удалить тип льготы. Есть связанные данные: ${relatedData.details.join(', ')}.`
+      }
+    } catch (error) {
+      console.error('Error checking related data:', error)
+    }
+
     confirm({
       title: `Удалить тип льготы "${benefitType?.name}"?`,
-      message: 'Удаление необратимо. Все связанные данные будут затронуты.',
+      message: relatedDataMessage,
       appearance: 'danger',
       confirmButtonText: translate('UI.DELETE'),
+      confirmButtonDisabled: hasRelatedData,
       onConfirm: async () => {
+        if (hasRelatedData) return
+
         try {
           await benefitTypesAPI.delete(id)
           loadBenefitTypes()
@@ -83,7 +101,9 @@ export default function BenefitTypes() {
           console.error('Error deleting benefit type:', error)
           setToasts([
             {
-              description: 'Ошибка при удалении типа льготы.',
+              description:
+                error.response?.data?.error ||
+                'Ошибка при удалении типа льготы.',
               id: `error-${id}`,
               key: `error-${id}`,
               title: 'Ошибка',
@@ -117,6 +137,201 @@ export default function BenefitTypes() {
     return labels[type] || type
   }
 
+  const handleExport = async () => {
+    try {
+      setIsExporting(true)
+      const params = {}
+      if (debouncedSearch) params.search = debouncedSearch
+      const rows = await benefitTypesAPI.list(false, params)
+
+      if (!rows || rows.length === 0) {
+        setToasts([
+          {
+            id: 'export-empty',
+            key: 'export-empty',
+            title: 'Нет данных для экспорта',
+            appearance: 'warning',
+            description: 'По текущим фильтрам не найдено записей для выгрузки.',
+          },
+          ...toasts,
+        ])
+        return
+      }
+
+      const csvHeader = [
+        'Название',
+        'Описание',
+        'Тип расчета',
+        'Параметры расчета',
+        'Маршруты',
+        'Статус',
+      ]
+
+      const getCalculationParamsText = item => {
+        if (!item.calculationParams) return ''
+        const params = item.calculationParams
+        if (params.trips) return `${params.trips} поездок`
+        if (params.kilometers) return `${params.kilometers} км`
+        if (params.discountPercent) return `${params.discountPercent}%`
+        return ''
+      }
+
+      const csvRows = rows.map(item => [
+        item.name || '',
+        item.description || '',
+        getCalculationTypeLabel(item.calculationType),
+        getCalculationParamsText(item),
+        item.routes && item.routes.length > 0 ? item.routes.join(', ') : '',
+        item.isActive ? 'Активен' : 'Неактивен',
+      ])
+
+      const wrap = value => {
+        const sanitized = `${value ?? ''}`.replace(/"/g, '""')
+        return `"${sanitized}"`
+      }
+
+      const csvContent = [csvHeader, ...csvRows]
+        .map(row => row.map(wrap).join(';'))
+        .join('\n')
+
+      const blob = new Blob([`\uFEFF${csvContent}`], {
+        type: 'text/csv;charset=utf-8;',
+      })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute(
+        'download',
+        `benefit-types_${new Date().toISOString().slice(0, 10)}.csv`
+      )
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      setToasts([
+        {
+          id: 'export-success',
+          key: 'export-success',
+          title: 'Экспорт выполнен',
+          appearance: 'success',
+          description: `Успешно экспортировано записей: ${rows.length}.`,
+        },
+        ...toasts,
+      ])
+    } catch (error) {
+      console.error('Export benefit types error:', error)
+      setToasts([
+        {
+          id: 'export-error',
+          key: 'export-error',
+          title: 'Ошибка экспорта',
+          appearance: 'danger',
+          description:
+            error.response?.data?.error || 'Ошибка при экспорте данных',
+        },
+        ...toasts,
+      ])
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const renderBenefitTypeDetails = benefitType => {
+    const formatDate = date => {
+      if (!date) return '-'
+      try {
+        return new Date(date).toLocaleString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      } catch (e) {
+        return date
+      }
+    }
+
+    return (
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '16px',
+        }}
+      >
+        {benefitType.description && (
+          <div>
+            <strong>Описание:</strong>
+            <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+              {benefitType.description}
+            </p>
+          </div>
+        )}
+
+        <div>
+          <strong>Тип расчета:</strong>
+          <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+            {getCalculationTypeLabel(benefitType.calculationType)}
+          </p>
+        </div>
+
+        {benefitType.calculationParams && (
+          <div>
+            <strong>Параметры расчета:</strong>
+            <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+              {benefitType.calculationParams.trips &&
+                `${benefitType.calculationParams.trips} поездок`}
+              {benefitType.calculationParams.kilometers &&
+                `${benefitType.calculationParams.kilometers} км`}
+              {benefitType.calculationParams.discountPercent &&
+                `${benefitType.calculationParams.discountPercent}%`}
+              {!benefitType.calculationParams.trips &&
+                !benefitType.calculationParams.kilometers &&
+                !benefitType.calculationParams.discountPercent &&
+                '-'}
+            </p>
+          </div>
+        )}
+
+        <div>
+          <strong>Населенные пункты:</strong>
+          <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+            {benefitType.settlements && benefitType.settlements.length > 0
+              ? benefitType.settlements.join(', ')
+              : 'Все пункты'}
+          </p>
+        </div>
+
+        <div>
+          <strong>Статус:</strong>
+          <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+            {benefitType.isActive ? 'Активен' : 'Неактивен'}
+          </p>
+        </div>
+
+        {benefitType.createdAt && (
+          <div>
+            <strong>Создан:</strong>
+            <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+              {formatDate(benefitType.createdAt)}
+            </p>
+          </div>
+        )}
+
+        {benefitType.updatedAt && (
+          <div>
+            <strong>Обновлен:</strong>
+            <p style={{ margin: '4px 0 0', color: 'var(--m-text-light)' }}>
+              {formatDate(benefitType.updatedAt)}
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <>
       <AppPage
@@ -124,15 +339,25 @@ export default function BenefitTypes() {
         breadcrumbs={breadcrumbs}
         actions={
           (isAdmin() || isOperator()) && (
-            <Button
-              appearance="primary"
-              onClick={() => {
-                setSidebarOpened(true)
-                setBenefitTypeDetail({})
-              }}
-            >
-              Добавить тип льготы
-            </Button>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <Button
+                appearance="primary"
+                onClick={() => {
+                  setSidebarOpened(true)
+                  setBenefitTypeDetail({})
+                }}
+              >
+                Добавить тип льготы
+              </Button>
+              <Button
+                appearance="default"
+                iconBefore={<FiDownload />}
+                onClick={handleExport}
+                disabled={isExporting}
+              >
+                {isExporting ? 'Экспорт...' : 'Экспорт CSV'}
+              </Button>
+            </div>
           )
         }
       >
@@ -155,6 +380,7 @@ export default function BenefitTypes() {
               checkboxSelection
               disableColumnMenu
               disableSearchFilter
+              disableExport
             >
               {benefitTypes.map(benefitType => {
                 // Normalize all values to prevent null/undefined errors in table search
@@ -174,7 +400,11 @@ export default function BenefitTypes() {
                 }
 
                 return (
-                  <Tr key={benefitType.id} id={benefitType.id}>
+                  <ExpandableRow
+                    key={benefitType.id}
+                    id={benefitType.id}
+                    expandableContent={renderBenefitTypeDetails(benefitType)}
+                  >
                     <Td>{normalizeValue(benefitType.name)}</Td>
                     <Td>{normalizeValue(benefitType.description) || '-'}</Td>
                     <Td>
@@ -183,17 +413,6 @@ export default function BenefitTypes() {
                       )}
                     </Td>
                     <Td>{getCalculationParamsText()}</Td>
-                    <Td>
-                      {benefitType.routes && benefitType.routes.length > 0
-                        ? benefitType.routes.join(', ')
-                        : 'Все маршруты'}
-                    </Td>
-                    <Td>
-                      {benefitType.settlements &&
-                      benefitType.settlements.length > 0
-                        ? benefitType.settlements.join(', ')
-                        : 'Все пункты'}
-                    </Td>
                     <Td>
                       <Lozenge
                         appearance={
@@ -230,7 +449,7 @@ export default function BenefitTypes() {
                         )}
                       </div>
                     </Td>
-                  </Tr>
+                  </ExpandableRow>
                 )
               })}
             </Table>

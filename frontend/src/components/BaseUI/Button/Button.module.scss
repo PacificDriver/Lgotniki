@@ -329,3 +329,47 @@
     }
   }
 }
+
+// Мобильная адаптация
+@media (max-width: 767.88px) {
+  .button-container {
+    &__button {
+      padding: 0 12px;
+      font-size: 13px;
+      min-height: 36px;
+
+      &.button-text {
+        &--default {
+          height: 2rem;
+        }
+      }
+    }
+
+    &__block {
+      .button-container__button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .button-container {
+    &__button {
+      padding: 0 10px;
+      font-size: 12px;
+      min-height: 32px;
+      gap: 6px;
+
+      &.button-text {
+        &--default {
+          height: 1.875rem;
+
+          .use-icon {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+}

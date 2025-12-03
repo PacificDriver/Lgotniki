@@ -74,6 +74,7 @@ export default function Customers() {
             tableId="customer-list"
             checkboxSelection
             disableColumnMenu
+            disableExport
           >
             {customers.map((customer, index) => (
               <Tr key={index} id={customer?.id || index}>

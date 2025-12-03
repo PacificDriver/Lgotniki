@@ -4,6 +4,7 @@ import {
   FiFileText,
   FiUpload,
   FiSettings,
+  FiSliders,
 } from 'react-icons/fi'
 
 const navigation = [
@@ -28,6 +29,11 @@ const navigation = [
         name: 'Загрузка данных',
         url: '/dashboard/file-upload',
         icon: <FiUpload />,
+      },
+      {
+        name: 'Настройки системы',
+        url: '/dashboard/settings',
+        icon: <FiSliders />,
       },
       {
         name: 'Настройки пользователя',

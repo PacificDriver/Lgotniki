@@ -159,3 +159,64 @@
     }
   }
 }
+
+// Мобильная адаптация
+@media (max-width: 767.88px) {
+  .input-container {
+    gap: 8px;
+    margin-bottom: 12px;
+
+    &__input {
+      height: 36px;
+      padding: 0 10px;
+      font-size: 13px;
+    }
+
+    &__label {
+      font-size: 11px;
+      line-height: 14px;
+    }
+
+    &__message {
+      font-size: 12px;
+      margin-bottom: -22px;
+    }
+
+    &__use-icon {
+      top: 37px;
+      font-size: 16px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .input-container {
+    gap: 6px;
+    margin-bottom: 10px;
+
+    &__input {
+      height: 32px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+
+    &__label {
+      font-size: 11px;
+    }
+
+    &__message {
+      font-size: 11px;
+      margin-bottom: -20px;
+    }
+
+    &__use-icon {
+      top: 33px;
+      font-size: 14px;
+    }
+
+    &__input-icons {
+      right: 8px;
+      font-size: 14px;
+    }
+  }
+}

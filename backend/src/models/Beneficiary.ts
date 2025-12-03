@@ -82,6 +82,11 @@ export class BeneficiaryModel {
     status?: BeneficiaryStatus;
     benefitTypeId?: string;
     search?: string;
+    ageFrom?: number;
+    ageTo?: number;
+    birthMonth?: number;
+    birthDay?: number;
+    residence?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ beneficiaries: Beneficiary[]; total: number }> {
@@ -96,25 +101,59 @@ export class BeneficiaryModel {
 
     if (filters?.status) {
       paramCount++;
-      query += ` AND status = $${paramCount}`;
+      query += ` AND b.status = $${paramCount}`;
       params.push(filters.status);
     }
 
     if (filters?.benefitTypeId) {
       paramCount++;
-      query += ` AND benefit_type_id = $${paramCount}`;
+      query += ` AND b.benefit_type_id = $${paramCount}`;
       params.push(filters.benefitTypeId);
     }
 
     if (filters?.search) {
       paramCount++;
       query += ` AND (
-        full_name ILIKE $${paramCount} OR 
-        phone ILIKE $${paramCount} OR 
-        email ILIKE $${paramCount} OR
-        snils ILIKE $${paramCount}
+        b.full_name ILIKE $${paramCount} OR 
+        b.phone ILIKE $${paramCount} OR 
+        b.email ILIKE $${paramCount} OR
+        b.snils ILIKE $${paramCount}
       )`;
       params.push(`%${filters.search}%`);
+    }
+
+    // Age filter (from birth_date)
+    if (filters?.ageFrom !== undefined) {
+      paramCount++;
+      query += ` AND EXTRACT(YEAR FROM AGE(CURRENT_DATE, b.birth_date)) >= $${paramCount}`;
+      params.push(filters.ageFrom);
+    }
+
+    if (filters?.ageTo !== undefined) {
+      paramCount++;
+      query += ` AND EXTRACT(YEAR FROM AGE(CURRENT_DATE, b.birth_date)) <= $${paramCount}`;
+      params.push(filters.ageTo);
+    }
+
+    // Birth month filter (1-12)
+    if (filters?.birthMonth) {
+      paramCount++;
+      query += ` AND EXTRACT(MONTH FROM b.birth_date) = $${paramCount}`;
+      params.push(filters.birthMonth);
+    }
+
+    // Birth day filter (1-31)
+    if (filters?.birthDay) {
+      paramCount++;
+      query += ` AND EXTRACT(DAY FROM b.birth_date) = $${paramCount}`;
+      params.push(filters.birthDay);
+    }
+
+    // Residence filter
+    if (filters?.residence) {
+      paramCount++;
+      query += ` AND b.residence ILIKE $${paramCount}`;
+      params.push(`%${filters.residence}%`);
     }
 
     // Get total count
@@ -126,7 +165,7 @@ export class BeneficiaryModel {
     const total = parseInt(countResult.rows[0].count);
 
     // Ordering before pagination
-    query += ' ORDER BY created_at DESC';
+    query += ' ORDER BY b.created_at DESC';
 
     // Add pagination
     if (filters?.limit) {

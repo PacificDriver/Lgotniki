@@ -109,6 +109,10 @@ export const benefitTypesAPI = {
     const response = await api.get(`/benefit-types/${id}`)
     return response.data
   },
+  checkRelatedData: async id => {
+    const response = await api.get(`/benefit-types/${id}/check-related-data`)
+    return response.data
+  },
   create: async data => {
     const response = await api.post('/benefit-types', data)
     return response.data
@@ -137,8 +141,8 @@ export const calculationTasksAPI = {
     const response = await api.post('/calculation-tasks', data)
     return response.data
   },
-  execute: async id => {
-    const response = await api.post(`/calculation-tasks/${id}/execute`)
+  execute: async (id, data = {}) => {
+    const response = await api.post(`/calculation-tasks/${id}/execute`, data)
     return response.data
   },
 }
@@ -196,6 +200,64 @@ export const publicAPI = {
   },
   recordUsage: async data => {
     const response = await api.post('/api/record-usage', data)
+    return response.data
+  },
+}
+
+// Stations API
+export const stationsAPI = {
+  list: async (params = {}) => {
+    const response = await api.get('/stations', { params })
+    return response.data
+  },
+  get: async id => {
+    const response = await api.get(`/stations/${id}`)
+    return response.data
+  },
+  sync: async () => {
+    const response = await api.post('/stations/sync')
+    return response.data
+  },
+  syncRoutes: async () => {
+    const response = await api.post('/stations/routes/sync')
+    return response.data
+  },
+  getSyncLogs: async (params = {}) => {
+    const response = await api.get('/stations/logs/sync', { params })
+    return response.data
+  },
+  getRaces: async (from, to, date) => {
+    const response = await api.get('/stations/races/search', {
+      params: { from, to, date },
+    })
+    return response.data
+  },
+}
+
+// Routes API
+export const routesAPI = {
+  list: async (params = {}) => {
+    const response = await api.get('/routes', { params })
+    return response.data
+  },
+  getRouteNumbers: async () => {
+    const response = await api.get('/routes/numbers')
+    return response.data
+  },
+  get: async id => {
+    const response = await api.get(`/routes/${id}`)
+    return response.data
+  },
+  create: async data => {
+    const response = await api.post('/routes', data)
+    return response.data
+  },
+  update: async (id, data) => {
+    const response = await api.put(`/routes/${id}`, data)
+    return response.data
+  },
+  delete: async id => {
+    const response = await api.delete(`/routes/${id}`)
     return response.data
   },
 }

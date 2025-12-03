@@ -4,8 +4,16 @@ import { BenefitAssignmentModel } from '../models/BenefitAssignment';
 import { CalculationTaskModel } from '../models/CalculationTask';
 import { TaskStatus, BenefitCalculationType, OperationType } from '../types';
 
+export interface ConflictResolution {
+  action: 'replace' | 'add_secondary' | 'skip';
+  deactivateExisting?: boolean;
+}
+
 export class BenefitCalculationService {
-  static async executeTask(taskId: string): Promise<void> {
+  static async executeTask(
+    taskId: string,
+    conflictResolution: ConflictResolution = { action: 'skip' }
+  ): Promise<void> {
     const task = await CalculationTaskModel.findById(taskId);
     if (!task) {
       throw new Error('Задача не найдена');
@@ -31,6 +39,11 @@ export class BenefitCalculationService {
       if (task.filters?.status) filters.status = task.filters.status;
       if (task.filters?.benefitTypeId) filters.benefitTypeId = task.filters.benefitTypeId;
       if (task.filters?.search) filters.search = task.filters.search;
+      if (task.filters?.ageFrom) filters.ageFrom = task.filters.ageFrom;
+      if (task.filters?.ageTo) filters.ageTo = task.filters.ageTo;
+      if (task.filters?.birthMonth) filters.birthMonth = task.filters.birthMonth;
+      if (task.filters?.birthDay) filters.birthDay = task.filters.birthDay;
+      if (task.filters?.residence) filters.residence = task.filters.residence;
 
       const { beneficiaries, total } = await BeneficiaryModel.findAll(filters);
       
@@ -40,22 +53,55 @@ export class BenefitCalculationService {
 
       let processed = 0;
       let errors: string[] = [];
+      let conflicts: any[] = [];
 
       for (const beneficiary of beneficiaries) {
         try {
-          // Check if beneficiary already has this benefit type assigned
+          // Check if beneficiary already has active benefits
           const existingAssignments = await BenefitAssignmentModel.findByBeneficiary(
             beneficiary.id,
             true
           );
 
           const hasActiveAssignment = existingAssignments.some(
-            (a) => a.benefitTypeId === task.benefitTypeId && a.isActive
+            (a) => a.isActive
           );
 
           if (hasActiveAssignment) {
-            processed++;
-            continue; // Skip if already assigned
+            // Handle conflict based on resolution strategy
+            switch (conflictResolution.action) {
+              case 'skip':
+                processed++;
+                conflicts.push({
+                  beneficiary: beneficiary.fullName,
+                  existingBenefits: existingAssignments.length,
+                  action: 'skipped',
+                });
+                continue;
+
+              case 'replace':
+                // Deactivate existing assignments
+                for (const assignment of existingAssignments) {
+                  await BenefitAssignmentModel.update(assignment.id, {
+                    isActive: false,
+                  });
+                }
+                conflicts.push({
+                  beneficiary: beneficiary.fullName,
+                  existingBenefits: existingAssignments.length,
+                  action: 'replaced',
+                });
+                break;
+
+              case 'add_secondary':
+                // Allow multiple active assignments
+                conflicts.push({
+                  beneficiary: beneficiary.fullName,
+                  existingBenefits: existingAssignments.length,
+                  action: 'added_secondary',
+                });
+                break;
+            }
           }
 
           // Calculate benefit parameters based on type
@@ -102,6 +148,7 @@ export class BenefitCalculationService {
               benefitTypeId: task.benefitTypeId,
               benefitTypeName: benefitType.name,
               taskId,
+              conflictResolution: conflictResolution.action,
             }
           );
 

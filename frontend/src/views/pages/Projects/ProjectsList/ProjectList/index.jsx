@@ -47,7 +47,12 @@ export default function ProjectGrid({ data }) {
 
   return (
     <div className="project-list-container">
-      <Table columns={headers} tableId="project-list" checkboxSelection>
+      <Table
+        columns={headers}
+        tableId="project-list"
+        checkboxSelection
+        disableExport
+      >
         {data?.map((project, index) => (
           <Tr key={index} id={project?.id || index}>
             <Td className="d-flex align-items-center gap-1">

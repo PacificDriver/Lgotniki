@@ -83,6 +83,45 @@ export class BenefitTypeModel {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
+  static async hasRelatedData(id: string): Promise<{ hasData: boolean; details: string[] }> {
+    const details: string[] = [];
+
+    // Check beneficiaries
+    const beneficiariesResult = await pool.query(
+      'SELECT COUNT(*) as count FROM beneficiaries WHERE benefit_type_id = $1',
+      [id]
+    );
+    const beneficiariesCount = parseInt(beneficiariesResult.rows[0].count, 10);
+    if (beneficiariesCount > 0) {
+      details.push(`льготников: ${beneficiariesCount}`);
+    }
+
+    // Check benefit_assignments
+    const assignmentsResult = await pool.query(
+      'SELECT COUNT(*) as count FROM benefit_assignments WHERE benefit_type_id = $1',
+      [id]
+    );
+    const assignmentsCount = parseInt(assignmentsResult.rows[0].count, 10);
+    if (assignmentsCount > 0) {
+      details.push(`назначений льгот: ${assignmentsCount}`);
+    }
+
+    // Check calculation_tasks
+    const tasksResult = await pool.query(
+      'SELECT COUNT(*) as count FROM calculation_tasks WHERE benefit_type_id = $1',
+      [id]
+    );
+    const tasksCount = parseInt(tasksResult.rows[0].count, 10);
+    if (tasksCount > 0) {
+      details.push(`задач расчёта: ${tasksCount}`);
+    }
+
+    return {
+      hasData: details.length > 0,
+      details,
+    };
+  }
+
   private static mapRowToBenefitType(row: any): BenefitType {
     return {
       id: row.id,

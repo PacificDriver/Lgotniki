@@ -93,12 +93,46 @@ export const updateBenefitType = async (
   }
 };
 
+export const checkRelatedData = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response | void> => {
+  try {
+    const { id } = req.params;
+    const benefitType = await BenefitTypeModel.findById(id);
+
+    if (!benefitType) {
+      return res.status(404).json({ error: 'Тип льготы не найден' });
+    }
+
+    const relatedData = await BenefitTypeModel.hasRelatedData(id);
+    return res.json(relatedData);
+  } catch (error) {
+    console.error('Check related data error:', error);
+    return res.status(500).json({ error: 'Ошибка при проверке связанных данных' });
+  }
+};
+
 export const deleteBenefitType = async (
   req: AuthRequest,
   res: Response
 ): Promise<Response | void> => {
   try {
     const { id } = req.params;
+
+    const benefitType = await BenefitTypeModel.findById(id);
+    if (!benefitType) {
+      return res.status(404).json({ error: 'Тип льготы не найден' });
+    }
+
+    // Check for related data
+    const relatedData = await BenefitTypeModel.hasRelatedData(id);
+    if (relatedData.hasData) {
+      return res.status(409).json({
+        error: `Невозможно удалить тип льготы. Есть связанные данные: ${relatedData.details.join(', ')}`,
+      });
+    }
+
     const deleted = await BenefitTypeModel.delete(id);
 
     if (!deleted) {

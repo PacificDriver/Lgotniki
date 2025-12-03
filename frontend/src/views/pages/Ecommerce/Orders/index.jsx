@@ -108,6 +108,7 @@ const Orders = () => {
             columns={headers}
             tableId="wish-list"
             checkboxSelection
+            disableExport
           >
             {orders.map((order, index) => (
               <Tr key={index} id={order?.id || index}>

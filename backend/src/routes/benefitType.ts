@@ -5,6 +5,7 @@ import {
   listBenefitTypes,
   updateBenefitType,
   deleteBenefitType,
+  checkRelatedData,
 } from '../controllers/benefitTypeController';
 import { authenticate, requireRole } from '../middleware/auth';
 
@@ -15,6 +16,7 @@ router.use(authenticate);
 
 // List and get - available to all authenticated users
 router.get('/', listBenefitTypes);
+router.get('/:id/check-related-data', checkRelatedData);
 router.get('/:id', getBenefitType);
 
 // Create and update - available to admin and operator

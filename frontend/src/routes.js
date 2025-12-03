@@ -10,6 +10,7 @@ const CalculationTasks = React.lazy(
   () => import('./views/pages/CalculationTasks')
 )
 const FileUpload = React.lazy(() => import('./views/pages/FileUpload'))
+const Settings = React.lazy(() => import('./views/pages/Settings'))
 const AccountSettings = React.lazy(
   () => import('./views/pages/AccountSettings')
 )
@@ -47,6 +48,12 @@ const routes = [
     exact: true,
     name: 'FileUpload',
     element: FileUpload,
+  },
+  {
+    path: '/dashboard/settings',
+    exact: true,
+    name: 'Settings',
+    element: Settings,
   },
   {
     path: '/dashboard/account/settings',

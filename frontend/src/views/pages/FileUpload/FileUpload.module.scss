@@ -306,6 +306,17 @@
     margin-bottom: 12px;
     display: block;
   }
+
+  &__description {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background-color: var(--m-subtle-card-background-color);
+    border-radius: var(--m-border-radius);
+    border-left: 3px solid var(--m-primary);
+    font-size: 13px;
+    color: var(--m-text-light);
+    line-height: 1.5;
+  }
 }
 
 .action-buttons {

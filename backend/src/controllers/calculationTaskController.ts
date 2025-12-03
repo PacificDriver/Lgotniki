@@ -13,19 +13,28 @@ export const createTask = async (
       return res.status(401).json({ error: 'Пользователь не аутентифицирован' });
     }
 
+    // Validate required fields
+    if (!req.body.name || !req.body.benefitTypeId) {
+      return res.status(400).json({ 
+        error: 'Необходимо указать название задачи и тип льготы' 
+      });
+    }
+
     const data = {
       name: req.body.name,
-      description: req.body.description,
+      description: req.body.description || null,
       benefitTypeId: req.body.benefitTypeId,
       filters: req.body.filters || {},
       status: TaskStatus.PENDING,
       createdBy: req.user.id,
     };
 
+    console.log('Creating task with data:', JSON.stringify(data, null, 2));
     const task = await CalculationTaskModel.create(data);
     return res.status(201).json(task);
   } catch (error: any) {
     console.error('Create task error:', error);
+    console.error('Error stack:', error.stack);
     return res.status(500).json({ error: error.message || 'Ошибка при создании задачи' });
   }
 };
@@ -76,9 +85,13 @@ export const executeTask = async (
 ): Promise<Response | void> => {
   try {
     const { id } = req.params;
+    const conflictResolution = {
+      action: req.body.conflictResolution || 'skip',
+      deactivateExisting: req.body.deactivateExisting || false,
+    };
     
     // Execute in background (in production, use a job queue)
-    BenefitCalculationService.executeTask(id).catch((error) => {
+    BenefitCalculationService.executeTask(id, conflictResolution).catch((error) => {
       console.error('Task execution error:', error);
     });
 

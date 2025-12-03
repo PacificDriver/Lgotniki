@@ -74,6 +74,7 @@ export default function Sellers() {
             columns={headers}
             tableId="list-of-sellers"
             checkboxSelection
+            disableExport
           >
             {selers.map((customer, index) => (
               <Tr key={index} id={customer?.id || index}>

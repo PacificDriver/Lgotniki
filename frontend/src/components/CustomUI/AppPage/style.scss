@@ -38,6 +38,19 @@
   }
 }
 
+// Дополнительная мобильная адаптация для AppPage
+@media (max-width: 767.88px) {
+  .app-page-container {
+    padding: 12px 12px 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-page-container {
+    padding: 8px 8px 0.5rem;
+  }
+}
+
 @-webkit-keyframes spin {
   from {
     transform: rotate(0deg);

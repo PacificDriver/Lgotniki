@@ -71,6 +71,34 @@ const Table = props => {
       }
     }
 
+    // Add data-label attributes to table cells for mobile responsive design
+    const addMobileLabels = () => {
+      const root = wrapperRef.current
+      if (!root) return
+
+      try {
+        const table = root.querySelector('table')
+        if (!table) return
+
+        const headerCells = table.querySelectorAll('thead th')
+        const headers = Array.from(headerCells).map(
+          th => th.textContent?.trim() || ''
+        )
+
+        const bodyCells = table.querySelectorAll('tbody td')
+        bodyCells.forEach((cell, index) => {
+          const colIndex = index % headers.length
+          const label = headers[colIndex]
+
+          if (label && !cell.hasAttribute('data-label')) {
+            cell.setAttribute('data-label', label)
+          }
+        })
+      } catch (e) {
+        // Silently handle errors
+      }
+    }
+
     // Patch table cells to prevent null/undefined errors in search
     const patchTableCells = () => {
       const root = wrapperRef.current
@@ -108,15 +136,17 @@ const Table = props => {
     translate()
     patchTableCells()
     patchStringMethods()
+    addMobileLabels()
 
     const observer = new MutationObserver(() => {
       translate()
       patchTableCells()
       patchStringMethods()
+      addMobileLabels()
     })
     observer.observe(wrapperRef.current, { childList: true, subtree: true })
     return () => observer.disconnect()
-  }, [])
+  }, [props.columns])
 
   return (
     <div className="localized-table" ref={wrapperRef}>
@@ -126,3 +156,4 @@ const Table = props => {
 }
 
 export { Table, Tr, Td }
+export { default as ExpandableRow } from './ExpandableRow'
