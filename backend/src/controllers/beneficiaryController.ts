@@ -216,7 +216,7 @@ export const updateBeneficiary = async (
       // Log general update if other fields changed (and not just status or benefit type)
       const otherFieldsChanged = Object.keys(updateData).some(key => {
         if (key === 'status' || key === 'benefitTypeId') return false;
-        return updateData[key] !== beneficiary[key];
+        return updateData[key as keyof typeof updateData] !== beneficiary[key as keyof typeof beneficiary];
       });
 
       if (otherFieldsChanged && !statusChanged && !benefitTypeChanged) {
