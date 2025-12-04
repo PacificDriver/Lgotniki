@@ -16,6 +16,7 @@ export enum OperationType {
   CARD_LINKED = 'card_linked',
   CARD_UNLINKED = 'card_unlinked',
   STATUS_CHANGED = 'status_changed',
+  BENEFIT_TYPE_CHANGED = 'benefit_type_changed',
 }
 
 export enum BenefitCalculationType {

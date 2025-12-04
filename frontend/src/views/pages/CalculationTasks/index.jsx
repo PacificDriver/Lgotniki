@@ -18,8 +18,14 @@ import { Toast, ToastContainer } from '../../../components/CustomUI/Toast'
 import Lozenge from '../../../components/BaseUI/Lozenge'
 import Input from '../../../components/BaseUI/Input'
 import Select from '../../../components/BaseUI/Select'
-import BeneficiaryAutocomplete from '../../../components/CustomUI/BeneficiaryAutocomplete'
-import { FiPlay, FiEye, FiPlus, FiX, FiDownload } from 'react-icons/fi'
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '../../../components/BaseUI/Modal'
+import { beneficiariesAPI } from '../../../services/api'
+import { FiPlay, FiEye, FiPlus, FiX, FiDownload, FiUsers } from 'react-icons/fi'
 
 const statusOptions = [
   { value: 'pending', label: 'Ожидает' },
@@ -722,6 +728,13 @@ function TaskForm({ task, benefitTypes, onSave }) {
   const [routeErrors, setRouteErrors] = useState({}) // Храним ошибки для каждой пары
   const [checkingRoutes, setCheckingRoutes] = useState({}) // Флаг проверки для каждой пары
   const [availableRouteNumbers, setAvailableRouteNumbers] = useState({}) // Доступные маршруты для каждой пары
+  const [beneficiaryModalOpen, setBeneficiaryModalOpen] = useState(false)
+  const [allBeneficiaries, setAllBeneficiaries] = useState([])
+  const [loadingBeneficiaries, setLoadingBeneficiaries] = useState(false)
+  const [beneficiarySearch, setBeneficiarySearch] = useState('')
+  const debouncedBeneficiarySearch = useDebounce(beneficiarySearch, 300)
+  const [previewBeneficiaries, setPreviewBeneficiaries] = useState([])
+  const [loadingPreview, setLoadingPreview] = useState(false)
 
   // Инициализируем routePairs если их нет
   useEffect(() => {
@@ -763,6 +776,18 @@ function TaskForm({ task, benefitTypes, onSave }) {
     loadStations()
   }, [])
 
+  // Загружаем всех льготников для модального окна
+  useEffect(() => {
+    if (beneficiaryModalOpen) {
+      loadAllBeneficiaries()
+    }
+  }, [beneficiaryModalOpen, debouncedBeneficiarySearch])
+
+  // Загружаем предпросмотр льготников на основе фильтров
+  useEffect(() => {
+    loadPreviewBeneficiaries()
+  }, [formData.filters, formData.benefitTypeId])
+
   const loadStations = async () => {
     try {
       setLoadingStations(true)
@@ -772,6 +797,99 @@ function TaskForm({ task, benefitTypes, onSave }) {
       console.error('Error loading stations:', error)
     } finally {
       setLoadingStations(false)
+    }
+  }
+
+  const loadAllBeneficiaries = async () => {
+    try {
+      setLoadingBeneficiaries(true)
+      const params = {}
+      if (debouncedBeneficiarySearch) {
+        params.search = debouncedBeneficiarySearch
+      }
+      const data = await beneficiariesAPI.list(params)
+      setAllBeneficiaries(data.beneficiaries || data || [])
+    } catch (error) {
+      console.error('Error loading beneficiaries:', error)
+    } finally {
+      setLoadingBeneficiaries(false)
+    }
+  }
+
+  const handleBeneficiaryToggle = beneficiaryId => {
+    const currentIds = formData.filters.beneficiaryIds || []
+    const idsArray = Array.isArray(currentIds) ? currentIds : [currentIds]
+    const isSelected = idsArray.includes(beneficiaryId)
+
+    if (isSelected) {
+      handleFilterChange(
+        'beneficiaryIds',
+        idsArray.filter(id => id !== beneficiaryId)
+      )
+    } else {
+      handleFilterChange('beneficiaryIds', [...idsArray, beneficiaryId])
+    }
+  }
+
+  const isBeneficiarySelected = beneficiaryId => {
+    const currentIds = formData.filters.beneficiaryIds || []
+    const idsArray = Array.isArray(currentIds) ? currentIds : [currentIds]
+    return idsArray.includes(beneficiaryId)
+  }
+
+  const loadPreviewBeneficiaries = async () => {
+    if (!formData.benefitTypeId) {
+      setPreviewBeneficiaries([])
+      return
+    }
+
+    try {
+      setLoadingPreview(true)
+
+      // Если выбраны конкретные beneficiaryIds, показываем только их (приоритет над фильтрами)
+      if (
+        formData.filters.beneficiaryIds &&
+        formData.filters.beneficiaryIds.length > 0
+      ) {
+        const selectedIds = Array.isArray(formData.filters.beneficiaryIds)
+          ? formData.filters.beneficiaryIds
+          : [formData.filters.beneficiaryIds]
+        const selectedData = await beneficiariesAPI.list({
+          beneficiaryIds: selectedIds,
+        })
+        setPreviewBeneficiaries(
+          selectedData.beneficiaries || selectedData || []
+        )
+        return
+      }
+
+      // Иначе используем другие фильтры
+      const previewFilters = { ...formData.filters }
+      delete previewFilters.beneficiaryIds
+      delete previewFilters.routePairs
+      delete previewFilters.conflictResolution
+
+      // Очищаем пустые значения
+      Object.keys(previewFilters).forEach(key => {
+        if (
+          previewFilters[key] === '' ||
+          previewFilters[key] === undefined ||
+          previewFilters[key] === null ||
+          (Array.isArray(previewFilters[key]) &&
+            previewFilters[key].length === 0)
+        ) {
+          delete previewFilters[key]
+        }
+      })
+
+      const data = await beneficiariesAPI.list(previewFilters)
+      const beneficiaries = data.beneficiaries || data || []
+      setPreviewBeneficiaries(beneficiaries)
+    } catch (error) {
+      console.error('Error loading preview beneficiaries:', error)
+      setPreviewBeneficiaries([])
+    } finally {
+      setLoadingPreview(false)
     }
   }
 
@@ -1346,24 +1464,37 @@ function TaskForm({ task, benefitTypes, onSave }) {
       </div>
 
       <div className="mb-3">
-        <BeneficiaryAutocomplete
-          label="Конкретные льготники"
-          value={
-            formData.filters.beneficiaryIds
-              ? Array.isArray(formData.filters.beneficiaryIds)
-                ? formData.filters.beneficiaryIds
-                : [formData.filters.beneficiaryIds]
-              : []
-          }
-          onChange={e => {
-            const ids = Array.isArray(e.target.value) ? e.target.value : []
-            handleFilterChange(
-              'beneficiaryIds',
-              ids.length > 0 ? ids : undefined
-            )
+        <label
+          style={{
+            display: 'block',
+            fontSize: '14px',
+            fontWeight: 500,
+            marginBottom: '8px',
           }}
-          placeholder="Начните вводить фамилию для поиска льготников..."
-        />
+        >
+          Конкретные льготники
+        </label>
+        <Button
+          appearance="default"
+          iconBefore={<FiUsers />}
+          onClick={() => setBeneficiaryModalOpen(true)}
+        >
+          {formData.filters.beneficiaryIds &&
+          formData.filters.beneficiaryIds.length > 0
+            ? `Выбрано: ${formData.filters.beneficiaryIds.length}`
+            : 'Выбрать льготников из реестра'}
+        </Button>
+        {formData.filters.beneficiaryIds &&
+          formData.filters.beneficiaryIds.length > 0 && (
+            <Button
+              appearance="subtle"
+              iconBefore={<FiX />}
+              onClick={() => handleFilterChange('beneficiaryIds', undefined)}
+              style={{ marginLeft: '8px' }}
+            >
+              Очистить
+            </Button>
+          )}
       </div>
 
       <h4 style={{ marginTop: '24px', marginBottom: '16px', fontSize: '16px' }}>
@@ -1383,11 +1514,347 @@ function TaskForm({ task, benefitTypes, onSave }) {
         />
       </div>
 
+      {/* Предпросмотр льготников */}
+      {formData.benefitTypeId && (
+        <div
+          style={{
+            marginTop: '32px',
+            padding: '20px',
+            border: '1px solid #e0e0e0',
+            borderRadius: '8px',
+            backgroundColor: '#f9f9f9',
+          }}
+        >
+          <h4
+            style={{
+              marginTop: 0,
+              marginBottom: '16px',
+              fontSize: '18px',
+              fontWeight: 600,
+            }}
+          >
+            Предпросмотр: для кого будет выполнена задача
+          </h4>
+          {loadingPreview ? (
+            <div
+              style={{ padding: '20px', textAlign: 'center', color: '#666' }}
+            >
+              Загрузка...
+            </div>
+          ) : previewBeneficiaries.length > 0 ? (
+            <>
+              <div
+                style={{
+                  marginBottom: '16px',
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  color: '#1976d2',
+                }}
+              >
+                Всего льготников: {previewBeneficiaries.length}
+              </div>
+              <div
+                style={{
+                  maxHeight: '300px',
+                  overflowY: 'auto',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '4px',
+                  backgroundColor: '#fff',
+                }}
+              >
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr
+                      style={{
+                        backgroundColor: '#f5f5f5',
+                        borderBottom: '2px solid #e0e0e0',
+                      }}
+                    >
+                      <th
+                        style={{
+                          padding: '12px',
+                          textAlign: 'left',
+                          fontSize: '14px',
+                          fontWeight: 600,
+                        }}
+                      >
+                        ФИО
+                      </th>
+                      <th
+                        style={{
+                          padding: '12px',
+                          textAlign: 'left',
+                          fontSize: '14px',
+                          fontWeight: 600,
+                        }}
+                      >
+                        Телефон
+                      </th>
+                      <th
+                        style={{
+                          padding: '12px',
+                          textAlign: 'left',
+                          fontSize: '14px',
+                          fontWeight: 600,
+                        }}
+                      >
+                        Статус
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {previewBeneficiaries.slice(0, 50).map(beneficiary => (
+                      <tr
+                        key={beneficiary.id}
+                        style={{
+                          borderBottom: '1px solid #f0f0f0',
+                        }}
+                      >
+                        <td style={{ padding: '12px', fontSize: '14px' }}>
+                          {beneficiary.fullName || '-'}
+                        </td>
+                        <td style={{ padding: '12px', fontSize: '14px' }}>
+                          {beneficiary.phone || '-'}
+                        </td>
+                        <td style={{ padding: '12px', fontSize: '14px' }}>
+                          {beneficiary.status === 'active'
+                            ? 'Активен'
+                            : beneficiary.status === 'inactive'
+                              ? 'Неактивен'
+                              : beneficiary.status || '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {previewBeneficiaries.length > 50 && (
+                  <div
+                    style={{
+                      padding: '12px',
+                      textAlign: 'center',
+                      fontSize: '14px',
+                      color: '#666',
+                      borderTop: '1px solid #e0e0e0',
+                    }}
+                  >
+                    ... и еще {previewBeneficiaries.length - 50} льготников
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div
+              style={{
+                padding: '20px',
+                textAlign: 'center',
+                color: '#999',
+                fontSize: '14px',
+              }}
+            >
+              По выбранным фильтрам льготники не найдены
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="mt-4">
         <Button appearance="primary" type="submit">
           {translate('UI.SAVE')}
         </Button>
       </div>
+
+      {/* Модальное окно выбора льготников */}
+      <Modal
+        isOpen={beneficiaryModalOpen}
+        onClose={() => setBeneficiaryModalOpen(false)}
+        width="large"
+        scrollBehavior="inside"
+      >
+        <ModalHeader onClose={() => setBeneficiaryModalOpen(false)}>
+          Выбор льготников из реестра
+        </ModalHeader>
+        <ModalBody>
+          <div style={{ marginBottom: '16px' }}>
+            <Input
+              placeholder="Поиск по ФИО, телефону, email..."
+              value={beneficiarySearch}
+              onChange={e => setBeneficiarySearch(e.target.value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+          {loadingBeneficiaries ? (
+            <div
+              style={{
+                padding: '40px',
+                textAlign: 'center',
+                color: '#666',
+              }}
+            >
+              Загрузка...
+            </div>
+          ) : allBeneficiaries.length > 0 ? (
+            <div
+              style={{
+                maxHeight: '400px',
+                overflowY: 'auto',
+                border: '1px solid #e0e0e0',
+                borderRadius: '4px',
+              }}
+            >
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr
+                    style={{
+                      backgroundColor: '#f5f5f5',
+                      borderBottom: '2px solid #e0e0e0',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1,
+                    }}
+                  >
+                    <th
+                      style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        width: '40px',
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={
+                          allBeneficiaries.length > 0 &&
+                          allBeneficiaries.every(b =>
+                            isBeneficiarySelected(b.id)
+                          )
+                        }
+                        onChange={e => {
+                          if (e.target.checked) {
+                            const allIds = allBeneficiaries.map(b => b.id)
+                            const currentIds =
+                              formData.filters.beneficiaryIds || []
+                            const idsArray = Array.isArray(currentIds)
+                              ? currentIds
+                              : [currentIds]
+                            handleFilterChange('beneficiaryIds', [
+                              ...new Set([...idsArray, ...allIds]),
+                            ])
+                          } else {
+                            const allIds = allBeneficiaries.map(b => b.id)
+                            const currentIds =
+                              formData.filters.beneficiaryIds || []
+                            const idsArray = Array.isArray(currentIds)
+                              ? currentIds
+                              : [currentIds]
+                            handleFilterChange(
+                              'beneficiaryIds',
+                              idsArray.filter(id => !allIds.includes(id))
+                            )
+                          }
+                        }}
+                      />
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      ФИО
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Телефон
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Статус
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allBeneficiaries.map(beneficiary => (
+                    <tr
+                      key={beneficiary.id}
+                      style={{
+                        borderBottom: '1px solid #f0f0f0',
+                        cursor: 'pointer',
+                        backgroundColor: isBeneficiarySelected(beneficiary.id)
+                          ? '#e3f2fd'
+                          : 'transparent',
+                      }}
+                      onClick={() => handleBeneficiaryToggle(beneficiary.id)}
+                    >
+                      <td style={{ padding: '12px' }}>
+                        <input
+                          type="checkbox"
+                          checked={isBeneficiarySelected(beneficiary.id)}
+                          onChange={() =>
+                            handleBeneficiaryToggle(beneficiary.id)
+                          }
+                          onClick={e => e.stopPropagation()}
+                        />
+                      </td>
+                      <td style={{ padding: '12px', fontSize: '14px' }}>
+                        {beneficiary.fullName || '-'}
+                      </td>
+                      <td style={{ padding: '12px', fontSize: '14px' }}>
+                        {beneficiary.phone || '-'}
+                      </td>
+                      <td style={{ padding: '12px', fontSize: '14px' }}>
+                        {beneficiary.status === 'active'
+                          ? 'Активен'
+                          : beneficiary.status === 'inactive'
+                            ? 'Неактивен'
+                            : beneficiary.status || '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: '40px',
+                textAlign: 'center',
+                color: '#999',
+              }}
+            >
+              Льготники не найдены
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            appearance="default"
+            onClick={() => setBeneficiaryModalOpen(false)}
+          >
+            Закрыть
+          </Button>
+          <Button
+            appearance="primary"
+            onClick={() => setBeneficiaryModalOpen(false)}
+          >
+            Применить ({formData.filters.beneficiaryIds?.length || 0} выбрано)
+          </Button>
+        </ModalFooter>
+      </Modal>
     </form>
   )
 }

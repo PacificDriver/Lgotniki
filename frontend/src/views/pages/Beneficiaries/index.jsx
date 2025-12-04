@@ -28,6 +28,14 @@ import {
   FiTrash2,
   FiUserPlus,
   FiDownload,
+  FiCheckCircle,
+  FiXCircle,
+  FiFileText,
+  FiPlus,
+  FiGift,
+  FiCreditCard,
+  FiRefreshCw,
+  FiInfo,
 } from 'react-icons/fi'
 import BulkAddModal from './BulkAddModal'
 
@@ -54,6 +62,9 @@ export default function Beneficiaries() {
   const [isExporting, setIsExporting] = useState(false)
   const [selectedIds, setSelectedIds] = useState([])
   const [toasts, setToasts] = useState([])
+  const [operations, setOperations] = useState([])
+  const [loadingOperations, setLoadingOperations] = useState(false)
+  const [benefitTypesMap, setBenefitTypesMap] = useState({})
 
   const headers = [
     { name: 'ФИО', dataType: 'text' },
@@ -104,6 +115,25 @@ export default function Beneficiaries() {
   useEffect(() => {
     loadBeneficiaries()
   }, [pagination.page, debouncedSearch, statusFilter])
+
+  // Загружаем типы льгот для отображения в истории
+  useEffect(() => {
+    const loadBenefitTypes = async () => {
+      try {
+        const types = await benefitTypesAPI.list(false)
+        if (Array.isArray(types)) {
+          const map = {}
+          types.forEach(type => {
+            map[type.id] = type.name
+          })
+          setBenefitTypesMap(map)
+        }
+      } catch (error) {
+        console.error('Error loading benefit types:', error)
+      }
+    }
+    loadBenefitTypes()
+  }, [])
 
   const handleDelete = async id => {
     const beneficiary = beneficiaries.find(b => b.id === id)
@@ -166,7 +196,46 @@ export default function Beneficiaries() {
   const handleCloseModal = () => {
     setOpenModal(false)
     setBeneficiaryDetail(null)
+    setOperations([])
   }
+
+  const loadOperations = async beneficiaryId => {
+    if (!beneficiaryId) return
+    try {
+      setLoadingOperations(true)
+      const response = await beneficiariesAPI.getOperations(beneficiaryId)
+      // Проверяем разные форматы ответа
+      let ops = []
+      if (Array.isArray(response)) {
+        ops = response
+      } else if (response && Array.isArray(response.operations)) {
+        ops = response.operations
+      } else if (response && Array.isArray(response.data)) {
+        ops = response.data
+      } else if (response && typeof response === 'object') {
+        // Если это объект, пытаемся найти массив внутри
+        const keys = Object.keys(response)
+        const arrayKey = keys.find(key => Array.isArray(response[key]))
+        if (arrayKey) {
+          ops = response[arrayKey]
+        }
+      }
+
+      console.log('Loaded operations:', ops) // Дебаг-лог
+      setOperations(ops)
+    } catch (error) {
+      console.error('Error loading operations:', error)
+      setOperations([])
+    } finally {
+      setLoadingOperations(false)
+    }
+  }
+
+  useEffect(() => {
+    if (openModal && beneficiaryDetail?.id) {
+      loadOperations(beneficiaryDetail.id)
+    }
+  }, [openModal, beneficiaryDetail?.id])
 
   const getStatusLabel = status => {
     const option = statusOptions.find(opt => opt.value === status)
@@ -503,9 +572,12 @@ export default function Beneficiaries() {
                           icon={<FiEye style={{ fontSize: '18px' }} />}
                           appearance="subtle"
                           shape="circle"
-                          onClick={() => {
+                          onClick={async () => {
                             setOpenModal(true)
                             setBeneficiaryDetail(beneficiary)
+                            if (beneficiary.id) {
+                              await loadOperations(beneficiary.id)
+                            }
                           }}
                         />
                         {(isAdmin() || isOperator()) && (
@@ -540,50 +612,210 @@ export default function Beneficiaries() {
       <Modal
         isOpen={openModal}
         alignment={'center'}
-        size={'medium'}
+        size={'large'}
         onClose={handleCloseModal}
       >
         <ModalHeader>Данные льготника</ModalHeader>
         <ModalBody>
           {beneficiaryDetail && (
             <>
-              <div className="d-flex align-items-center gap-1 mb-3">
-                <div className="weight-500">ФИО:</div>
-                <div>{beneficiaryDetail.fullName}</div>
-              </div>
-              <div className="d-flex align-items-center gap-1 mb-3">
-                <div className="weight-500">Телефон:</div>
-                <div>{beneficiaryDetail.phone}</div>
-              </div>
-              <div className="d-flex align-items-center gap-1 mb-3">
-                <div className="weight-500">Email:</div>
-                <div>{beneficiaryDetail.email || '-'}</div>
-              </div>
-              <div className="d-flex align-items-center gap-1 mb-3">
-                <div className="weight-500">СНИЛС:</div>
-                <div>{beneficiaryDetail.snils || '-'}</div>
-              </div>
-              <div className="d-flex align-items-center gap-1 mb-3">
-                <div className="weight-500">Дата рождения:</div>
-                <div>
-                  {beneficiaryDetail.birthDate
-                    ? new Date(beneficiaryDetail.birthDate).toLocaleDateString(
-                        'ru-RU'
-                      )
-                    : '-'}
+              <div
+                style={{
+                  padding: '16px',
+                  backgroundColor: '#f9f9f9',
+                  borderRadius: '8px',
+                  marginBottom: '24px',
+                }}
+              >
+                <h4
+                  style={{
+                    marginTop: 0,
+                    marginBottom: '16px',
+                    fontSize: '16px',
+                  }}
+                >
+                  Основная информация
+                </h4>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      ФИО
+                    </div>
+                    <div style={{ fontWeight: 500 }}>
+                      {beneficiaryDetail.fullName}
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Телефон
+                    </div>
+                    <div>{beneficiaryDetail.phone}</div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Email
+                    </div>
+                    <div>{beneficiaryDetail.email || '-'}</div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      СНИЛС
+                    </div>
+                    <div>{beneficiaryDetail.snils || '-'}</div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Дата рождения
+                    </div>
+                    <div>
+                      {beneficiaryDetail.birthDate
+                        ? new Date(
+                            beneficiaryDetail.birthDate
+                          ).toLocaleDateString('ru-RU')
+                        : '-'}
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Статус
+                    </div>
+                    <div>
+                      <Lozenge
+                        appearance={getStatusLozengeAppearance(
+                          beneficiaryDetail.status
+                        )}
+                      >
+                        {getStatusLabel(beneficiaryDetail.status)}
+                      </Lozenge>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Тип льготы
+                    </div>
+                    <div>{beneficiaryDetail.benefitTypeName || '-'}</div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Место жительства
+                    </div>
+                    <div>{beneficiaryDetail.residence || '-'}</div>
+                  </div>
                 </div>
               </div>
-              <div className="d-flex align-items-center gap-1 mb-3">
-                <div className="weight-500">Статус:</div>
-                <div>
-                  <Lozenge
-                    appearance={getStatusLozengeAppearance(
-                      beneficiaryDetail.status
-                    )}
+
+              <div style={{ marginTop: '32px' }}>
+                <h4
+                  style={{
+                    marginTop: 0,
+                    marginBottom: '16px',
+                    fontSize: '18px',
+                    fontWeight: 600,
+                  }}
+                >
+                  История операций
+                </h4>
+                {loadingOperations ? (
+                  <div
+                    style={{
+                      padding: '40px',
+                      textAlign: 'center',
+                      color: '#666',
+                    }}
                   >
-                    {getStatusLabel(beneficiaryDetail.status)}
-                  </Lozenge>
-                </div>
+                    Загрузка истории...
+                  </div>
+                ) : operations.length > 0 ? (
+                  <div
+                    style={{
+                      maxHeight: '450px',
+                      overflowY: 'auto',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      backgroundColor: '#fff',
+                      position: 'relative',
+                      padding: '16px 0',
+                    }}
+                  >
+                    {operations.map((operation, index) => (
+                      <OperationHistoryItem
+                        key={operation.id || index}
+                        operation={operation}
+                        getStatusLabel={getStatusLabel}
+                        benefitTypesMap={benefitTypesMap}
+                        isLast={index === operations.length - 1}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      padding: '40px',
+                      textAlign: 'center',
+                      color: '#999',
+                      fontSize: '14px',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      backgroundColor: '#fafafa',
+                    }}
+                  >
+                    История операций отсутствует
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -929,6 +1161,326 @@ function BeneficiaryForm({ beneficiary, onSave }) {
         </Button>
       </div>
     </form>
+  )
+}
+
+function OperationHistoryItem({
+  operation,
+  getStatusLabel,
+  benefitTypesMap,
+  isLast = false,
+}) {
+  const getOperationIcon = type => {
+    const icons = {
+      created: <FiPlus style={{ color: '#4caf50' }} />,
+      updated: <FiEdit3 style={{ color: '#2196f3' }} />,
+      deleted: <FiTrash2 style={{ color: '#f44336' }} />,
+      loaded: <FiFileText style={{ color: '#ff9800' }} />,
+      benefit_assigned: <FiGift style={{ color: '#9c27b0' }} />,
+      benefit_used: <FiCheckCircle style={{ color: '#4caf50' }} />,
+      card_linked: <FiCreditCard style={{ color: '#00bcd4' }} />,
+      card_unlinked: <FiXCircle style={{ color: '#ff9800' }} />,
+      status_changed: <FiRefreshCw style={{ color: '#2196f3' }} />,
+      benefit_type_changed: <FiEdit3 style={{ color: '#9c27b0' }} />,
+    }
+    return icons[type] || <FiInfo style={{ color: '#757575' }} />
+  }
+
+  const getOperationLabel = type => {
+    const labels = {
+      created: 'Создание',
+      updated: 'Обновление',
+      deleted: 'Удаление',
+      loaded: 'Загрузка из файла',
+      benefit_assigned: 'Назначение льготы',
+      benefit_used: 'Использование льготы',
+      card_linked: 'Привязка карты',
+      card_unlinked: 'Отвязка карты',
+      status_changed: 'Изменение статуса',
+      benefit_type_changed: 'Изменение типа льготы',
+    }
+    return labels[type] || type
+  }
+
+  const formatOperationDetails = op => {
+    if (!op) return null
+
+    // Дебаг-лог для проверки структуры данных
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Formatting operation:', op)
+    }
+
+    const details = op.details || {}
+    // Если details - строка, пытаемся распарсить
+    let parsedDetails = details
+    if (typeof details === 'string') {
+      try {
+        parsedDetails = JSON.parse(details)
+      } catch (e) {
+        parsedDetails = {}
+      }
+    }
+    const parts = []
+
+    // Обработка изменения статуса
+    if (op.operationType === 'status_changed') {
+      if (parsedDetails.oldStatus && parsedDetails.newStatus) {
+        parts.push(
+          `Статус изменен: ${getStatusLabel(parsedDetails.oldStatus)} → ${getStatusLabel(parsedDetails.newStatus)}`
+        )
+      } else if (parsedDetails.newStatus) {
+        parts.push(
+          `Статус установлен: ${getStatusLabel(parsedDetails.newStatus)}`
+        )
+      } else if (parsedDetails.oldStatus) {
+        parts.push(`Статус был: ${getStatusLabel(parsedDetails.oldStatus)}`)
+      }
+    }
+
+    // Обработка изменения типа льготы (новый тип операции)
+    if (op.operationType === 'benefit_type_changed') {
+      const oldName =
+        parsedDetails.oldBenefitTypeName ||
+        (parsedDetails.oldBenefitTypeId &&
+          benefitTypesMap[parsedDetails.oldBenefitTypeId]) ||
+        'не указан'
+      const newName =
+        parsedDetails.newBenefitTypeName ||
+        (parsedDetails.newBenefitTypeId &&
+          benefitTypesMap[parsedDetails.newBenefitTypeId]) ||
+        'не указан'
+      parts.push(`Тип льготы изменен: ${oldName} → ${newName}`)
+    }
+
+    // Обработка обновления с указанием типа изменения
+    if (
+      op.operationType === 'updated' &&
+      parsedDetails.changeType === 'benefit_type'
+    ) {
+      const oldName =
+        parsedDetails.oldBenefitTypeName ||
+        (parsedDetails.oldBenefitTypeId &&
+          benefitTypesMap[parsedDetails.oldBenefitTypeId]) ||
+        'не указан'
+      const newName =
+        parsedDetails.newBenefitTypeName ||
+        (parsedDetails.newBenefitTypeId &&
+          benefitTypesMap[parsedDetails.newBenefitTypeId]) ||
+        'не указан'
+      parts.push(`Тип льготы изменен: ${oldName} → ${newName}`)
+    }
+
+    // Обработка назначения льготы
+    if (op.operationType === 'benefit_assigned') {
+      const benefitTypeName =
+        parsedDetails.benefitTypeName ||
+        (parsedDetails.benefitTypeId &&
+          benefitTypesMap[parsedDetails.benefitTypeId])
+      if (benefitTypeName) {
+        parts.push(`Тип льготы: ${benefitTypeName}`)
+      }
+      if (parsedDetails.taskId) {
+        parts.push(`Задача расчета: ${parsedDetails.taskId.substring(0, 8)}...`)
+      }
+    }
+
+    // Обработка использования льготы
+    if (op.operationType === 'benefit_used') {
+      if (parsedDetails.routeNumber) {
+        parts.push(`Маршрут: №${parsedDetails.routeNumber}`)
+      }
+      if (parsedDetails.settlement) {
+        parts.push(`Населенный пункт: ${parsedDetails.settlement}`)
+      }
+      if (parsedDetails.tripsUsed) {
+        parts.push(`Использовано поездок: ${parsedDetails.tripsUsed}`)
+      }
+      if (parsedDetails.kilometersUsed) {
+        parts.push(`Использовано км: ${parsedDetails.kilometersUsed}`)
+      }
+    }
+
+    // Обработка загрузки из файла
+    if (op.operationType === 'loaded') {
+      if (parsedDetails.source) {
+        parts.push(`Источник: ${parsedDetails.source}`)
+      }
+      if (parsedDetails.loadMode) {
+        parts.push(`Режим загрузки: ${parsedDetails.loadMode}`)
+      }
+    }
+
+    // Обработка общего обновления (если не было специфических полей)
+    if (op.operationType === 'updated' && parts.length === 0) {
+      const changedFields = []
+      if (parsedDetails.newData) {
+        Object.keys(parsedDetails.newData).forEach(key => {
+          if (
+            parsedDetails.oldData &&
+            parsedDetails.oldData[key] !== parsedDetails.newData[key]
+          ) {
+            changedFields.push(key)
+          }
+        })
+      }
+      if (changedFields.length > 0) {
+        parts.push(`Изменены поля: ${changedFields.join(', ')}`)
+      } else if (Object.keys(parsedDetails).length > 0) {
+        parts.push('Данные обновлены')
+      }
+    }
+
+    // Обработка создания
+    if (op.operationType === 'created') {
+      if (parsedDetails.newData && parsedDetails.newData.fullName) {
+        parts.push(`Создан льготник: ${parsedDetails.newData.fullName}`)
+      } else {
+        parts.push('Льготник создан')
+      }
+    }
+
+    // Обработка удаления
+    if (op.operationType === 'deleted') {
+      if (parsedDetails.oldData && parsedDetails.oldData.fullName) {
+        parts.push(`Удален льготник: ${parsedDetails.oldData.fullName}`)
+      } else {
+        parts.push('Льготник удален')
+      }
+    }
+
+    // Обработка привязки/отвязки карты
+    if (op.operationType === 'card_linked') {
+      if (parsedDetails.cardType) {
+        parts.push(`Тип карты: ${parsedDetails.cardType}`)
+      }
+      if (parsedDetails.cardNumber) {
+        parts.push(`Номер карты: ${parsedDetails.cardNumber}`)
+      }
+    }
+
+    if (op.operationType === 'card_unlinked') {
+      if (parsedDetails.cardType) {
+        parts.push(`Тип карты: ${parsedDetails.cardType}`)
+      }
+      if (parsedDetails.cardNumber) {
+        parts.push(`Номер карты: ${parsedDetails.cardNumber}`)
+      }
+    }
+
+    return parts.length > 0 ? parts.join(', ') : null
+  }
+
+  const formatDate = date => {
+    if (!date) return '-'
+    try {
+      return new Date(date).toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    } catch (e) {
+      return date
+    }
+  }
+
+  const details = formatOperationDetails(operation)
+
+  return (
+    <div
+      style={{
+        padding: '16px 16px 16px 48px',
+        borderBottom: isLast ? 'none' : '1px solid #f0f0f0',
+        display: 'flex',
+        gap: '16px',
+        alignItems: 'flex-start',
+        position: 'relative',
+        paddingLeft: '64px',
+      }}
+    >
+      {/* Timeline line */}
+      {!isLast && (
+        <div
+          style={{
+            position: 'absolute',
+            left: '31px',
+            top: '48px',
+            bottom: '-16px',
+            width: '2px',
+            backgroundColor: '#e0e0e0',
+          }}
+        />
+      )}
+
+      {/* Icon */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '36px',
+          height: '36px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          border: '2px solid #e0e0e0',
+          flexShrink: 0,
+          marginTop: '2px',
+          position: 'absolute',
+          left: '16px',
+          zIndex: 1,
+        }}
+      >
+        {getOperationIcon(operation.operationType)}
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: '6px',
+            gap: '16px',
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: '14px', color: '#333' }}>
+            {getOperationLabel(operation.operationType)}
+          </div>
+          <div
+            style={{
+              fontSize: '12px',
+              color: '#666',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {formatDate(operation.createdAt)}
+          </div>
+        </div>
+        {details && (
+          <div
+            style={{
+              fontSize: '13px',
+              color: '#555',
+              marginBottom: '6px',
+              lineHeight: '1.5',
+              backgroundColor: '#f9f9f9',
+              padding: '8px 12px',
+              borderRadius: '4px',
+            }}
+          >
+            {details}
+          </div>
+        )}
+        {operation.performedByName && (
+          <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+            <span style={{ fontWeight: 500 }}>Пользователь:</span>{' '}
+            {operation.performedByName}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 

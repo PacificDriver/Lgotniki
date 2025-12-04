@@ -253,12 +253,30 @@ export class BeneficiaryModel {
 
   static async getOperations(beneficiaryId: string): Promise<any[]> {
     const result = await pool.query(
-      `SELECT * FROM beneficiary_operations 
+      `SELECT 
+        id,
+        beneficiary_id as "beneficiaryId",
+        operation_type as "operationType",
+        performed_by as "performedBy",
+        performed_by_name as "performedByName",
+        details,
+        created_at as "createdAt"
+      FROM beneficiary_operations 
       WHERE beneficiary_id = $1 
       ORDER BY created_at DESC`,
       [beneficiaryId]
     );
-    return result.rows;
+    
+    // Преобразуем данные: парсим details если это JSON строка
+    return result.rows.map(row => ({
+      id: row.id,
+      beneficiaryId: row.beneficiaryId,
+      operationType: row.operationType,
+      performedBy: row.performedBy,
+      performedByName: row.performedByName,
+      details: typeof row.details === 'string' ? JSON.parse(row.details) : row.details,
+      createdAt: row.createdAt,
+    }));
   }
 
   private static mapRowToBeneficiary(row: any): Beneficiary {

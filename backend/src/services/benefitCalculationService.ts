@@ -3,6 +3,7 @@ import { BenefitTypeModel } from '../models/BenefitType';
 import { BenefitAssignmentModel } from '../models/BenefitAssignment';
 import { CalculationTaskModel } from '../models/CalculationTask';
 import { TaskStatus, BenefitCalculationType, OperationType } from '../types';
+import pool from '../config/database';
 
 export interface ConflictResolution {
   action: 'replace' | 'add_secondary' | 'skip';
@@ -145,12 +146,43 @@ export class BenefitCalculationService {
             isActive: true,
           });
 
-          // Log operation
+          // Get user name for logging
+          let userName = 'Система';
+          try {
+            const userResult = await pool.query(
+              'SELECT full_name FROM users WHERE id = $1',
+              [task.createdBy]
+            );
+            if (userResult.rows.length > 0) {
+              userName = userResult.rows[0].full_name;
+            }
+          } catch (error) {
+            console.error('Error fetching user name:', error);
+          }
+
+          // Check if benefitTypeId changed
+          const oldBenefitTypeId = beneficiary.benefitTypeId;
+          const benefitTypeChanged = oldBenefitTypeId !== task.benefitTypeId;
+
+          // Update beneficiary's benefitTypeId
+          console.log(`Updating beneficiary ${beneficiary.id}: benefitTypeId from ${oldBenefitTypeId} to ${task.benefitTypeId}`);
+          const updatedBeneficiary = await BeneficiaryModel.update(beneficiary.id, {
+            benefitTypeId: task.benefitTypeId,
+          });
+          
+          if (!updatedBeneficiary) {
+            console.error(`Failed to update beneficiary ${beneficiary.id}`);
+            throw new Error(`Не удалось обновить льготника ${beneficiary.id}`);
+          }
+          
+          console.log(`Beneficiary ${beneficiary.id} updated. New benefitTypeId: ${updatedBeneficiary.benefitTypeId}`);
+
+          // Log benefit assignment
           await BeneficiaryModel.logOperation(
             beneficiary.id,
             OperationType.BENEFIT_ASSIGNED,
             task.createdBy,
-            'System', // Could be improved to get actual user name
+            userName,
             {
               benefitTypeId: task.benefitTypeId,
               benefitTypeName: benefitType.name,
@@ -158,6 +190,33 @@ export class BenefitCalculationService {
               conflictResolution: conflictResolution.action,
             }
           );
+
+          // Log benefit type change separately if it changed
+          if (benefitTypeChanged) {
+            let oldBenefitTypeName = null;
+            if (oldBenefitTypeId) {
+              try {
+                const oldBenefitType = await BenefitTypeModel.findById(oldBenefitTypeId);
+                oldBenefitTypeName = oldBenefitType?.name || null;
+              } catch (error) {
+                console.error('Error fetching old benefit type:', error);
+              }
+            }
+
+            await BeneficiaryModel.logOperation(
+              beneficiary.id,
+              OperationType.BENEFIT_TYPE_CHANGED,
+              task.createdBy,
+              userName,
+              {
+                oldBenefitTypeId,
+                oldBenefitTypeName,
+                newBenefitTypeId: task.benefitTypeId,
+                newBenefitTypeName: benefitType.name,
+                taskId,
+              }
+            );
+          }
 
           processed++;
         } catch (error: any) {

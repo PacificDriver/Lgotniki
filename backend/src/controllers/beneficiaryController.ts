@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { BeneficiaryModel } from '../models/Beneficiary';
+import { BenefitTypeModel } from '../models/BenefitType';
 import { AuthRequest } from '../middleware/auth';
 import { BeneficiaryStatus, OperationType } from '../types';
 
@@ -158,19 +159,75 @@ export const updateBeneficiary = async (
 
     const updated = await BeneficiaryModel.update(id, updateData);
 
-    // Log operation
+    // Log operations - log multiple operations if multiple things changed
     if (req.user) {
-      const operationType = updateData.status && updateData.status !== beneficiary.status
-        ? OperationType.STATUS_CHANGED
-        : OperationType.UPDATED;
+      const statusChanged = updateData.status !== undefined && updateData.status !== beneficiary.status;
+      const benefitTypeChanged = updateData.benefitTypeId !== undefined && 
+        updateData.benefitTypeId !== beneficiary.benefitTypeId;
 
-      await BeneficiaryModel.logOperation(
-        id,
-        operationType,
-        req.user.id,
-        req.user.fullName,
-        { oldData: beneficiary, newData: updateData }
-      );
+      // Log status change separately if it changed
+      if (statusChanged) {
+        await BeneficiaryModel.logOperation(
+          id,
+          OperationType.STATUS_CHANGED,
+          req.user.id,
+          req.user.fullName,
+          { 
+            oldStatus: beneficiary.status, 
+            newStatus: updateData.status,
+            oldData: beneficiary, 
+            newData: updateData 
+          }
+        );
+      }
+
+      // Log benefit type change separately if it changed
+      if (benefitTypeChanged) {
+        // Get benefit type names for logging
+        let oldBenefitTypeName = null;
+        let newBenefitTypeName = null;
+        
+        if (beneficiary.benefitTypeId) {
+          const oldBenefitType = await BenefitTypeModel.findById(beneficiary.benefitTypeId);
+          oldBenefitTypeName = oldBenefitType?.name || null;
+        }
+        
+        if (updateData.benefitTypeId) {
+          const newBenefitType = await BenefitTypeModel.findById(updateData.benefitTypeId);
+          newBenefitTypeName = newBenefitType?.name || null;
+        }
+
+        await BeneficiaryModel.logOperation(
+          id,
+          OperationType.BENEFIT_TYPE_CHANGED,
+          req.user.id,
+          req.user.fullName,
+          { 
+            oldBenefitTypeId: beneficiary.benefitTypeId, 
+            newBenefitTypeId: updateData.benefitTypeId,
+            oldBenefitTypeName,
+            newBenefitTypeName,
+            oldData: beneficiary, 
+            newData: updateData 
+          }
+        );
+      }
+
+      // Log general update if other fields changed (and not just status or benefit type)
+      const otherFieldsChanged = Object.keys(updateData).some(key => {
+        if (key === 'status' || key === 'benefitTypeId') return false;
+        return updateData[key] !== beneficiary[key];
+      });
+
+      if (otherFieldsChanged && !statusChanged && !benefitTypeChanged) {
+        await BeneficiaryModel.logOperation(
+          id,
+          OperationType.UPDATED,
+          req.user.id,
+          req.user.fullName,
+          { oldData: beneficiary, newData: updateData }
+        );
+      }
     }
 
     return res.json(updated);
